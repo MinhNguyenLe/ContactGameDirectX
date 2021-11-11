@@ -26,7 +26,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	CGameObject::Update(dt);
 
 	// Simple fall down
-	vy += MARIO_GRAVITY * dt;
+	/*vy += MARIO_GRAVITY * dt;*/
 
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
@@ -69,7 +69,6 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 		if (nx != 0) vx = 0;
 		if (ny != 0) vy = 0;
-
 
 		//
 		// Collision logic with other objects
@@ -163,6 +162,12 @@ void CMario::SetState(int state)
 
 	switch (state)
 	{
+	case MARIO_STATE_WALKING_DOWN:
+		vy = MARIO_WALKING_SPEED;
+		break;
+	case MARIO_STATE_WALKING_UP:
+		vy = -MARIO_WALKING_SPEED;
+		break;
 	case MARIO_STATE_WALKING_RIGHT:
 		vx = MARIO_WALKING_SPEED;
 		nx = 1;
@@ -177,6 +182,7 @@ void CMario::SetState(int state)
 		break;
 	case MARIO_STATE_IDLE:
 		vx = 0;
+		vy = 0;
 		break;
 	case MARIO_STATE_DIE:
 		vy = -MARIO_DIE_DEFLECT_SPEED;

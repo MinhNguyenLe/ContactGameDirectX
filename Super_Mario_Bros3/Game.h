@@ -86,6 +86,15 @@ public:
 
 	static CGame* GetInstance();
 
+	int GetCamX()
+	{
+		return cam_x;
+	}
+	int GetCamY()
+	{
+		return cam_y;
+	}
+
 	~CGame();
 };
 
