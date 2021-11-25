@@ -20,9 +20,9 @@
 #include "GameObject.h"
 #include "Textures.h"
 
-#include "Mario.h"
+#include "TANK_BODY.h"
 #include "Brick.h"
-#include "Goomba.h"
+#include "Eye.h"
 
 #include "PlayScene.h"
 
