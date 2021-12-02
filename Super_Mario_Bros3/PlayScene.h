@@ -12,7 +12,14 @@
 #include "MapObj.h"
 #include "CLaserGuard.h"
 #include "CBallCarry.h"
+#include "CBallbot.h"
 #include "CDrap.h"
+#include "CGX680.h"
+#include "CGX680S.h"
+#include "CSTUKA.h"
+#include "Eyelet.h"
+#include "Interrupt.h"
+#include "CTANKBULLET.h"
 
 #include "Utils.h"
 #include "Game.h"
@@ -109,7 +116,7 @@ class CPlayScenceKeyHandler : public CScenceKeyHandler
 public:
 	virtual void KeyState(BYTE* states);
 	virtual void OnKeyDown(int KeyCode);
-	virtual void OnKeyUp(int KeyCode) {};
+	virtual void OnKeyUp(int KeyCode);
 	CPlayScenceKeyHandler(CScene* s) :CScenceKeyHandler(s) {};
 };
 
