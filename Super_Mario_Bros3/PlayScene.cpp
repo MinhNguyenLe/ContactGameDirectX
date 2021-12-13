@@ -239,8 +239,6 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 			return;
 		}
 		obj = new CTANK_BODY(x, getMapheight() - y);
-		//obj = new CTANK_BODY(x,y);
-		DebugOut(L"RRRRRRRRRrY Xe la %d  %f  \n", getMapheight(),y);
 
 		player = (CTANK_BODY*)obj;
 
@@ -298,6 +296,11 @@ void CPlayScene::_ParseSection_MAP(string line)
 	int totalRowsMap = atoi(tokens[3].c_str());
 	int totalColumnsMap = atoi(tokens[4].c_str());
 	int totalTiles = atoi(tokens[5].c_str());
+
+	setMapheight(int(atoi(tokens[3].c_str())) * 32);
+
+	CGame::GetInstance()->GetCurrentScene()->setMapheight(int(atoi(tokens[3].c_str())) * 32);
+
 	wstring file_path = ToWSTR(tokens[6]);
 
 	map = new Map(idTileSet, totalRowsTileSet, totalColumnsTileSet, totalRowsMap, totalColumnsMap, totalTiles);
@@ -330,8 +333,6 @@ void CPlayScene::Update(DWORD dt)
 	float cx, cy;
 
 	player->GetPosition(cx, cy);
-
-	DebugOut(L"PST x y %f %f", cx, cy);
 
 	cy = cy;
 
@@ -416,7 +417,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		mario->Reset();
 		break;
 	case DIK_A:
-		mario->SetisFiring(true);
+		mario->SetisFiring(true);	
 		break;
 	}
 }
@@ -428,7 +429,6 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 		{
 		case DIK_A:
 			mario->SetisFiring(false);
-			mario->SetisAlreadyFired(false);
 			break;
 		}
 }

@@ -26,7 +26,7 @@ void CTANK_BODY::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	CGameObject::Update(dt);
 
 	// Simple fall down
-	//vy += TANK_BODY_GRAVITY * dt;
+	vy += TANK_BODY_GRAVITY * dt;
 
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
@@ -42,6 +42,12 @@ void CTANK_BODY::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		untouchable_start = 0;
 		untouchable = 0;
+	}
+
+	if (isAlreadyFired && (DWORD)GetTickCount64() - firing_start > TANK_BODY_FIRING_DELAY_TIME)
+	{
+		SetisAlreadyFired(false);
+		SetisIsFiring(0);
 	}
 
 	// No collision occured, proceed normally
@@ -135,7 +141,6 @@ void CTANK_BODY::SetState(int state)
 		break;
 	case TANK_BODY_STATE_IDLE:
 		vx = 0;
-		vy = 0;
 		break;
 	case TANK_BODY_STATE_DIE:
 		vy = TANK_BODY_DIE_DEFLECT_SPEED;
