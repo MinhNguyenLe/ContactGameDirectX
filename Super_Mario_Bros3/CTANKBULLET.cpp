@@ -1,7 +1,7 @@
 #include "CTANKBULLET.h"
 #include <algorithm>
 #include "PlayScene.h"
-#include "TANK_BODY.h"
+#include "SOPHIA.h"
 #include "Brick.h"
 
 CTANKBULLET::CTANKBULLET()
@@ -46,17 +46,17 @@ void CTANKBULLET::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 	if (isUsed == false)
 	{
-		CTANK_BODY* TANK_BODY = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-		if (TANK_BODY->GetisFiring() == true)
+		CSOPHIA* SOPHIA = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+		if (SOPHIA->GetisFiring() == true)
 		{
-			if (TANK_BODY->GetisAlreadyFired() == false)
+			if (SOPHIA->GetisAlreadyFired() == false)
 			{
 				isUsed = true;
-				x = TANK_BODY->x;
-				y = TANK_BODY->y - 9;
-				SetSpeed(TANK_BODY->nx * 0.15);
-				TANK_BODY->SetisAlreadyFired(true);
-				TANK_BODY->StartFiring();
+				x = SOPHIA->x;
+				y = SOPHIA->y;
+				SetSpeed(SOPHIA->nx * 0.15);
+				SOPHIA->SetisAlreadyFired(true);
+				SOPHIA->StartFiring();
 				StartReset();
 				DebugOut(L"FIRED \n");
 			}
@@ -80,28 +80,18 @@ void CTANKBULLET::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
-			//if (dynamic_cast<CBALLBOT*>(e->obj)) // if e->obj is Goomba
-			//{
-			//	CBALLBOT* obj = dynamic_cast<CBALLBOT*>(e->obj);
-			//	obj->SetState(CBALLBOT_STATE_DIE);
-			//}
-			//if (dynamic_cast<CBALLCARRY*>(e->obj)) // if e->obj is Goomba
-			//{
-			//	CBALLCARRY* obj = dynamic_cast<CBALLCARRY*>(e->obj);
-			//	obj->SetState(CBALLCARRY_STATE_DIE);
-			//}
-			//if (dynamic_cast<CDRAP*>(e->obj)) // if e->obj is Goomba
-			//{
-			//	CDRAP* obj = dynamic_cast<CDRAP*>(e->obj);
-			//	obj->SetState(CDRAP_STATE_DIE);
-			//}
 			if (!dynamic_cast<CBrick*>(e->obj)) // if e->obj is Goomba
 			{
-				(e->obj)->SetState(CDRAP_STATE_DIE);
-			}
-			if (nx != 0 )
-			{
+				(e->obj)->SetState(STATE_DIE);
+				((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddKaboomMng(e->obj->x, e->obj->y);
 				SetState(CTANKBULLET_STATE_DIE);
+			}
+			else {
+				if (nx != 0)
+				{
+					((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddKaboomMng(x, y);
+					SetState(CTANKBULLET_STATE_DIE);
+				}
 			}
 		}
 		// clean up collision events
@@ -119,7 +109,7 @@ void CTANKBULLET::CalcPotentialCollisions(
 	for (UINT i = 0; i < coObjects->size(); i++)
 	{
 		LPCOLLISIONEVENT e = SweptAABBEx(coObjects->at(i));
-		if (dynamic_cast<CTANK_BODY*>(e->obj))
+		if (dynamic_cast<CSOPHIA*>(e->obj))
 		{
 				continue;
 		}

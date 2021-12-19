@@ -1,35 +1,34 @@
 #pragma once
 #include "GameObject.h"
-#define CTANKBULLET_SPEED 0.15f;
-#define CTANKBULLET_STATE_DIE_SPEED 0;
+#define CREDWORM_SPEED 0.075f;
 
-#define CTANKBULLET_BBOX_WIDTH	7
-#define CTANKBULLET_BBOX_HEIGHT 9
+#define CREDWORM_BBOX_WIDTH	7
+#define CREDWORM_BBOX_HEIGHT 9
 
-#define	CTANKBULLET_STATE_DIE	90
-#define CTANKBULLET_STATE_FLYING 100
+#define	CREDWORM_STATE_DIE	200
+#define CREDWORM_STATE_WALKING 100
 
-#define CTANKBULLET_ANI_FLYING_RIGHT 0
-#define CTANKBULLET_ANI_FLYING_LEFT 1
+#define CREDWORM_ANI_WALKING_RIGHT 1
+#define CREDWORM_ANI_WALKING_LEFT 0
 
-#define CTANKBULLET_GRAVITY	0.0008f
-#define CTANKBULLET_RESET_TIME 5000
+#define CREDWORM_GRAVITY	0.0008f
+#define CREDWORM_RESET_TIME 5000
 
 #define STORING_LOCATION 5000
 
 
-class CTANKBULLET : public CGameObject
+class CREDWORM : public CGameObject
 {
 	DWORD reset_start;
-	void StartReset() { reset_start = (DWORD)GetTickCount64(); }
 	bool isUsed = false;
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	virtual void Render();
 	void CalcPotentialCollisions(vector<LPGAMEOBJECT>* coObjects, vector<LPCOLLISIONEVENT>& coEvents);
+	void StartReset() { reset_start = (DWORD)GetTickCount64(); }
 
 public:
-	CTANKBULLET();
+	CREDWORM();
 	void SetisUsed(bool value) { isUsed = value; }
 	bool GetisUsed() { return isUsed; }
 	virtual void SetState(int state);

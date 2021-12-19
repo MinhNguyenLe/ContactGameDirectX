@@ -4,11 +4,11 @@
 #include "Scene.h"
 #include "GameObject.h"
 #include "Brick.h"
-#include "TANK_BODY.h"
+#include "SOPHIA.h"
 #include "Eye.h"
 #include "Koopas.h"
 #include "Map.h"
-#include "TankParts.h"
+#include "CTANKWHEELS.h"
 #include "MapObj.h"
 #include "CLaserGuard.h"
 #include "CBallCarry.h"
@@ -20,6 +20,12 @@
 #include "Eyelet.h"
 #include "Interrupt.h"
 #include "CTANKBULLET.h"
+#include "CEvenType1.h"
+#include "CINTERRUPT_BULLET.h"
+#include "CREDWORM.h"
+#include "TANKBODY.h"
+#include "TANKTURRET.h"
+#include "EFFECT.h"
 
 #include "Utils.h"
 #include "Game.h"
@@ -72,11 +78,14 @@ public:
 class CPlayScene : public CScene
 {
 protected:
-	CTANK_BODY* player;					// A play scene has to have player, right? 
+	CSOPHIA* player;					// A play scene has to have player, right? 
 	vector<LPGAMEOBJECT> objects;
 	int mapHeight;
 	Map* map;
 	CQuadTree* quadtree;
+	vector<CEvenType1*> InterruptBulletMng ;
+	vector<CEvenType1*> WormSpamMng;
+	vector<CEvenType1*> KaboomMng;
 
 	void _ParseSection_TEXTURES(string line);
 	void _ParseSection_SPRITES(string line);
@@ -95,8 +104,9 @@ public:
 	virtual void Unload();
 
 	bool IsInUseArea(float Ox, float Oy);
+	bool IsInside(float Ox, float Oy, float xRange, float yRange, float tx, float ty);
 
-	CTANK_BODY* GetPlayer() { return player; }
+	CSOPHIA* GetPlayer() { return player; }
 
 	void setMapheight(int height)
 	{
@@ -107,7 +117,67 @@ public:
 	{
 		return mapHeight;
 	}
-
+	/////////////////KaboomMng
+	void AddKaboomMng(float x, float y)
+	{
+		CEvenType1* obj = new CEvenType1(x, y);
+		this->KaboomMng.push_back(obj);
+	}
+	CEvenType1* GetKaboomMng()
+	{
+		return KaboomMng.at(0);
+	}
+	bool CheckKaboomMng()
+	{
+		if (KaboomMng.size() != 0)
+			return true;
+		return false;
+	}
+	void DeleteKaboomMng()
+	{
+		this->KaboomMng.erase(KaboomMng.begin());
+	}
+	/////////////////InterruptBulletMng
+	void AddInterruptBulletMng(float x, float y)
+	{
+		CEvenType1* obj = new CEvenType1(x, y);
+		this->InterruptBulletMng.push_back(obj);
+	}
+	CEvenType1* GetInterruptBulletMng()
+	{
+		return InterruptBulletMng.at(0);
+	}
+	bool CheckInterruptBulletMng()
+	{
+		if (InterruptBulletMng.size() != 0)
+			return true;
+		return false;
+	}
+	void DeleteInterruptBulletMng()
+	{
+		this->InterruptBulletMng.erase(InterruptBulletMng.begin());
+	}
+	//////////////////////////WormSpamMng
+	void AddWormSpamMng(float x, float y)
+	{
+		CEvenType1* obj = new CEvenType1(x, y);
+		this->WormSpamMng.push_back(obj);
+	}
+	CEvenType1* GetWormSpamMng()
+	{
+		return WormSpamMng.at(0);
+	}
+	bool CheckWormSpamMng()
+	{
+		if (WormSpamMng.size() != 0)
+			return true;
+		return false;
+	}
+	void DeleteWormSpamMng()
+	{
+		this->WormSpamMng.erase(WormSpamMng.begin());
+	}
+	///////////////////////////////
 	//friend class CPlayScenceKeyHandler;
 };
 

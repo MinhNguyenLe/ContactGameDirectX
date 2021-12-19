@@ -2,6 +2,7 @@
 #pragma once
 #include "GameObject.h"
 #include "Game.h"
+#include "PlayScene.h"
 #include "algorithm"
 
 #define CINTERRUPT_WALKING_SPEED 0.05f;
@@ -19,7 +20,6 @@
 #define CINTERRUPT_STATE_IDLE 100
 #define CINTERRUPT_STATE_DIE 200
 #define CINTERRUPT_STATE_WALKING 300
-
 
 
 class CINTERRUPT : public CGameObject
