@@ -16,6 +16,10 @@ void CBALLBOT::GetBoundingBox(float& left, float& top, float& right, float& bott
 		bottom = y + CBALLBOT_BBOX_HEIGHT_DIE;
 	else
 		bottom = y + CBALLBOT_BBOX_HEIGHT;
+	if (state == CBALLBOT_STATE_DIE)
+	{
+		left = top = right = bottom = 0;
+	}
 }
 
 void CBALLBOT::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -27,78 +31,78 @@ void CBALLBOT::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	coEvents.clear();
 	if (!triggered) {
-	if (switch_state != 0 && state != CBALLBOT_STATE_IDLE)
-	{
-		if ((DWORD)GetTickCount64() - pre_tickcount >= 50)
+		if (switch_state != 0 && state != CBALLBOT_STATE_IDLE)
 		{
-			tickcount_diff += (DWORD)GetTickCount64() - pre_tickcount;
-		}
-
-		pre_tickcount = (DWORD)GetTickCount64();
-
-		if ((DWORD)GetTickCount64() - switch_state >= CBALLBOT_SWITCH_STATE_TIME + tickcount_diff)
-		{
-			SetState(CBALLBOT_STATE_FLY_UP);
-			if (x > playscene->GetPlayer()->GetPositionX())
+			if ((DWORD)GetTickCount64() - pre_tickcount >= 50)
 			{
-				vx = -2*CBALLBOT_FLYING_SPEED;
+				tickcount_diff += (DWORD)GetTickCount64() - pre_tickcount;
 			}
-			else 
+
+			pre_tickcount = (DWORD)GetTickCount64();
+
+			if ((DWORD)GetTickCount64() - switch_state >= CBALLBOT_SWITCH_STATE_TIME + tickcount_diff)
 			{
-				vx = 2 * CBALLBOT_FLYING_SPEED;
-			}
+				SetState(CBALLBOT_STATE_FLY_UP);
+				if (x > playscene->GetPlayer()->GetPositionX())
+				{
+					vx = -2 * CBALLBOT_FLYING_SPEED;
+				}
+				else
+				{
+					vx = 2 * CBALLBOT_FLYING_SPEED;
+				}
 				switch_state = 0;
 				tickcount_diff = 0;
+			}
 		}
-	}
 
-	if (state == CBALLBOT_STATE_IDLE && playscene->IsInside(x - 20, y, x + 20, y + 100, playscene->GetPlayer()->GetPositionX(), playscene->GetPlayer()->GetPositionY()))
-	{
-		SetState(CBALLBOT_STATE_FALLING);
-		StartSwitch_state();
-	}
-
-	if (state != CBALLBOT_STATE_DIE)
-		CalcPotentialCollisions(coObjects, coEvents);
-
-	// No collision occured, proceed normally
-	if (coEvents.size() == 0)
-	{
-		x += dx;
-		y += dy;
-	}
-	else
-	{
-		float min_tx, min_ty, nx = 0, ny;
-		float rdx = 0;
-		float rdy = 0;
-
-		// TODO: This is a very ugly designed function!!!!
-		FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
-
-		for (UINT i = 0; i < coEventsResult.size(); i++)
+		if (state == CBALLBOT_STATE_IDLE && playscene->IsInside(x - 20, y, x + 20, y + 100, playscene->GetPlayer()->GetPositionX(), playscene->GetPlayer()->GetPositionY()))
 		{
-			LPCOLLISIONEVENT e = coEventsResult[i];
-			if (dynamic_cast<CBrick*>(e->obj)) // if e->obj is Goomba
+			SetState(CBALLBOT_STATE_FALLING);
+			StartSwitch_state();
+		}
+
+		if (state != CBALLBOT_STATE_DIE)
+			CalcPotentialCollisions(coObjects, coEvents);
+
+		// No collision occured, proceed normally
+		if (coEvents.size() == 0)
+		{
+			x += dx;
+			y += dy;
+		}
+		else
+		{
+			float min_tx, min_ty, nx = 0, ny;
+			float rdx = 0;
+			float rdy = 0;
+
+			// TODO: This is a very ugly designed function!!!!
+			FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
+
+			for (UINT i = 0; i < coEventsResult.size(); i++)
 			{
-				if (ny < 0 && nx == 0) 
+				LPCOLLISIONEVENT e = coEventsResult[i];
+				if (dynamic_cast<CBrick*>(e->obj)) // if e->obj is Goomba
 				{
-					SetState(CBALLBOT_STATE_IDLE);
-					switch_state = 0;
-					tickcount_diff = 0;
-					pre_tickcount = 0;
-					triggered = true;
+					if (ny < 0 && nx == 0)
+					{
+						SetState(CBALLBOT_STATE_IDLE);
+						switch_state = 0;
+						tickcount_diff = 0;
+						pre_tickcount = 0;
+						triggered = true;
+					}
+					if (nx != 0)
+					{
+						vx = 0;
+					}
 				}
-				if (nx != 0)
-				{
-					vx = 0;
-				}
+
 			}
 
+			for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 		}
-
-		for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
-	}
 	}
 }
 
@@ -133,11 +137,11 @@ void CBALLBOT::Render()
 		}
 		if (vx == 0)
 			ani = pre_ani;
-		
+
 		animation_set->at(ani)->Render(x, y);
 		//RenderBoundingBox();
 	}
-	
+
 }
 
 void CBALLBOT::SetState(int state)
@@ -150,7 +154,7 @@ void CBALLBOT::SetState(int state)
 		vy = 0;
 		break;
 	case CBALLBOT_STATE_FALLING:
-		vy = 2*CBALLBOT_FLYING_SPEED;
+		vy = 2 * CBALLBOT_FLYING_SPEED;
 		vx = 0;
 		break;
 	case CBALLBOT_STATE_FLY_UP:
@@ -158,7 +162,7 @@ void CBALLBOT::SetState(int state)
 		vx = 0;
 		break;
 	case CBALLBOT_STATE_DIE:
-		vy = DIE_PULL;
+		vy = 10 * DIE_PULL;
 		break;
 	}
 }

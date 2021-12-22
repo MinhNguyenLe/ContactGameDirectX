@@ -44,7 +44,7 @@ void CINTERRUPT_BULLET::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		if (((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->CheckInterruptBulletMng())
 		{
-			this->SetPosition(playscene->GetInterruptBulletMng()->getInterrupt_FiringPoisitionX(), playscene->GetInterruptBulletMng()->getInterrupt_FiringPoisitionY());
+			this->SetPosition(playscene->GetInterruptBulletMng()->getCEventPoisitionX(), playscene->GetInterruptBulletMng()->getCEventPoisitionY());
 			playscene->DeleteInterruptBulletMng();
 			isUsed = true;
 			SetState(CINTERRUPT_BULLET_STATE_IDLE);
@@ -108,8 +108,8 @@ void CINTERRUPT_BULLET::Render()
 	switch (state)
 	{
 	case CINTERRUPT_BULLET_STATE_IDLE:
-		 ani = CINTERRUPT_BULLET_ANI_IDLE;
-		 break;
+		ani = CINTERRUPT_BULLET_ANI_IDLE;
+		break;
 	case CINTERRUPT_BULLET_STATE_DIE:
 		return;
 	}
