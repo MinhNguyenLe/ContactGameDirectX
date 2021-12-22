@@ -68,7 +68,7 @@ public:
 	{
 		listObjects.push_back(obj);
 	}
-	int getVollunm() {
+	int getVollunm(){
 		return listObjects.size();
 	}
 	void Render();
@@ -87,7 +87,7 @@ protected:
 	int mapHeight;
 	Map* map;
 	CQuadTree* quadtree;
-	vector<CEvenType1*> InterruptBulletMng;
+	vector<CEvenType1*> InterruptBulletMng ;
 	vector<CEvenType1*> WormSpamMng;
 	vector<CEvenType1*> KaboomMng;
 	vector<CEvenType1*> BoomCarryMng;
@@ -134,7 +134,7 @@ public:
 		{
 			BoomCarryMng.at(0)->setCEventStack(BoomCarryMng.at(0)->getCEventStack() + 1);
 		}
-		else
+		else 
 		{
 			DeleteBoomCarryMng();
 		}
@@ -225,3 +225,4 @@ public:
 	virtual void OnKeyUp(int KeyCode);
 	CPlayScenceKeyHandler(CScene* s) :CScenceKeyHandler(s) {};
 };
+

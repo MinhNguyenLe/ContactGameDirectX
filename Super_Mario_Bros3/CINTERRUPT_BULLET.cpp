@@ -108,8 +108,8 @@ void CINTERRUPT_BULLET::Render()
 	switch (state)
 	{
 	case CINTERRUPT_BULLET_STATE_IDLE:
-		ani = CINTERRUPT_BULLET_ANI_IDLE;
-		break;
+		 ani = CINTERRUPT_BULLET_ANI_IDLE;
+		 break;
 	case CINTERRUPT_BULLET_STATE_DIE:
 		return;
 	}

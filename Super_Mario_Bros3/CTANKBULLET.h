@@ -34,3 +34,4 @@ public:
 	bool GetisUsed() { return isUsed; }
 	virtual void SetState(int state);
 };
+

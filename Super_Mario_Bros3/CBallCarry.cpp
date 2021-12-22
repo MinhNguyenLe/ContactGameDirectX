@@ -1,4 +1,5 @@
 #include "CBALLCARRY.h"
+
 CBALLCARRY::CBALLCARRY()
 {
 	SetState(STATE_IDLE);
@@ -127,9 +128,10 @@ void CBALLCARRY::CalcPotentialCollisions(
 
 void CBALLCARRY::Render()
 {
+	int ani = 0;
 	if (state != STATE_DIE)
 	{
-		if (vx == 0)
+		if(vx == 0)
 			ani = CBALLCARRY_ANI_IDLE;
 		else {
 			if (vx > 0)

@@ -37,7 +37,7 @@ void CSTUKA::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	if (state != STATE_DIE)
 	{
-		if (state != CSTUKA_STATE_ATTACK && playscene->IsInside(x - CSTUKA_BBOX_WIDTH, y, x, y + 200, playscene->GetPlayer()->GetPositionX(), playscene->GetPlayer()->GetPositionY()))
+		if (state != CSTUKA_STATE_ATTACK && playscene->IsInside(x - CSTUKA_BBOX_WIDTH, y, x , y + 200, playscene->GetPlayer()->GetPositionX(), playscene->GetPlayer()->GetPositionY()))
 		{
 			SetState(CSTUKA_STATE_ATTACK);
 			vx = (playscene->GetPlayer()->GetPositionX() - x) / abs(playscene->GetPlayer()->GetPositionX() - x) * CSTUKA_WALKING_SPEED;
@@ -88,8 +88,8 @@ void CSTUKA::SetState(int state)
 		vy = CSTUKA_WALKING_SPEED;
 		break;
 	case STATE_DIE:
-		vy = DIE_PULL;
-		break;
+			vy = DIE_PULL;
+			break;
 
 	}
 }

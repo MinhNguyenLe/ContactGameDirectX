@@ -189,7 +189,6 @@ void CSOPHIA::CalcPotentialCollisions(
 		{
 			continue;
 		}
-
 		if (e->t > 0 && e->t <= 1.0f)
 			collisionEvents.push_back(e);
 		else

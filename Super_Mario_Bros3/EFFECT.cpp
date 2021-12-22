@@ -20,7 +20,7 @@ void EFFECT::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			switch_state = 0;
 		}
 	}
-	if (!active)
+	if(!active)
 	{
 		x = STORING_LOCATION;
 		y = STORING_LOCATION;
@@ -39,8 +39,8 @@ void EFFECT::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 void EFFECT::Render()
 {
-	if (active)
-		animation_set->at(0)->Render(x, y);
+	if(active)
+	animation_set->at(0)->Render(x, y);
 
 	//RenderBoundingBox();
 }

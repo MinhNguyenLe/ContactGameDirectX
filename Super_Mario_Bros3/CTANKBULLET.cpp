@@ -1,95 +1,156 @@
-#include "CSTUKA.h"
+#include "CTANKBULLET.h"
+#include <algorithm>
 #include "PlayScene.h"
-CSTUKA::CSTUKA()
+#include "SOPHIA.h"
+#include "Brick.h"
+
+CTANKBULLET::CTANKBULLET()
 {
-	SetState(CSTUKA_STATE_WALKING);
-	StartSwitch_state();
+	SetState(CTANKBULLET_STATE_FLYING);
+	nx = 0;
 }
 
-void CSTUKA::GetBoundingBox(float& left, float& top, float& right, float& bottom)
+void CTANKBULLET::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
 	left = x;
 	top = y;
-	right = x + CSTUKA_BBOX_WIDTH;
+	right = x + CTANKBULLET_BBOX_WIDTH;
 
-	if (state == CSTUKA_STATE_DIE)
-		bottom = y + CSTUKA_BBOX_HEIGHT_DIE;
-	else
-		bottom = y + CSTUKA_BBOX_HEIGHT;
+	if (state == CTANKBULLET_STATE_DIE)
+		y = y + CTANKBULLET_BBOX_HEIGHT;
+	else bottom = y + CTANKBULLET_BBOX_HEIGHT;
 }
 
-void CSTUKA::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
+void CTANKBULLET::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
+	if ((DWORD)GetTickCount64() - reset_start > CTANKBULLET_RESET_TIME)
+	{
+		state = CTANKBULLET_STATE_DIE;
+		reset_start = 0;
+	}
 	CGameObject::Update(dt, coObjects);
-	CPlayScene* playscene = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene());
+	vector<LPCOLLISIONEVENT> coEvents;
+	vector<LPCOLLISIONEVENT> coEventsResult;
 
-	//
-	// TO-DO: make sure Goomba can interact with the world and to each of them too!
-	//
-
-	//if (pre_tickcount + 50 <= (DWORD)GetTickCount64() && switch_state != 0)
-	//{
-	//	tickcount_diff += (DWORD)GetTickCount64() - pre_tickcount;
-	//}
-
-	x += dx;
-	y += dy;
-
-	if (state != STATE_DIE)
+	coEvents.clear();
+	
+	// turn off collision when die 
+	if (state != CTANKBULLET_STATE_DIE)
+		CalcPotentialCollisions(coObjects, coEvents);
+	else
 	{
-		if (state != CSTUKA_STATE_ATTACK && playscene->IsInside(x - CSTUKA_BBOX_WIDTH, y, x, y + 200, playscene->GetPlayer()->GetPositionX(), playscene->GetPlayer()->GetPositionY()))
+		isUsed = false;
+		x = STORING_LOCATION;
+		y = STORING_LOCATION;
+		SetState(CTANKBULLET_STATE_FLYING);
+	}
+	if (isUsed == false)
+	{
+		CSOPHIA* SOPHIA = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+		if (SOPHIA->GetisFiring() == true)
 		{
-			SetState(CSTUKA_STATE_ATTACK);
-			vx = (playscene->GetPlayer()->GetPositionX() - x) / abs(playscene->GetPlayer()->GetPositionX() - x) * CSTUKA_WALKING_SPEED;
-		}
-
-		if (state == CSTUKA_STATE_WALKING)
-		{
-			switch_state_time = CSTUKA_WALKING_TIME;
-		}
-		else {
-			switch_state_time = CSTUKA_ATTACK_TIME;
-		}
-
-
-		if ((DWORD)GetTickCount64() - switch_state > switch_state_time + tickcount_diff && switch_state != 0)
-		{
-			vx = -vx;
-			pre_tickcount = 0;
-			tickcount_diff = 0;
-			switch_state = 0;
-			StartSwitch_state();
+			if (SOPHIA->GetisAlreadyFired() == false)
+			{
+				isUsed = true;
+				x = SOPHIA->x;
+				y = SOPHIA->y;
+				SetSpeed(SOPHIA->nx * CTANKBULLET_SPEED);
+				SOPHIA->SetisAlreadyFired(true);
+				SOPHIA->StartFiring();
+				StartReset();
+				DebugOut(L"FIRED \n");
+			}
 		}
 	}
+	// No collision occured, proceed normally
+	if (coEvents.size() == 0)
+	{
+		x += dx;
+		y += dy;
+	}
+	else
+	{
+		float min_tx, min_ty, nx = 0, ny;
+		float rdx = 0;
+		float rdy = 0;
 
+		// TODO: This is a very ugly designed function!!!!
+		FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
+
+		for (UINT i = 0; i < coEventsResult.size(); i++)
+		{
+			LPCOLLISIONEVENT e = coEventsResult[i];
+			if (!dynamic_cast<CBrick*>(e->obj)) // if e->obj is Goomba
+			{
+				(e->obj)->SetState(STATE_DIE);
+				((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddKaboomMng(e->obj->x, e->obj->y);
+				SetState(CTANKBULLET_STATE_DIE);
+			}
+			else {
+				if (nx != 0)
+				{
+					((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddKaboomMng(x, y);
+					SetState(CTANKBULLET_STATE_DIE);
+				}
+			}
+		}
+		// clean up collision events
+		for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
+		if (x <= 0)
+			if (vx < 0)
+				vx = -vx;
+	}
 }
 
-void CSTUKA::Render()
+void CTANKBULLET::CalcPotentialCollisions(
+	vector<LPGAMEOBJECT>* coObjects,
+	vector<LPCOLLISIONEVENT>& coEvents)
 {
-	if (state != STATE_DIE)
+	for (UINT i = 0; i < coObjects->size(); i++)
 	{
-		int ani = CSTUKA_ANI;
-
-		animation_set->at(ani)->Render(x, y);
-
-		//RenderBoundingBox();
+		LPCOLLISIONEVENT e = SweptAABBEx(coObjects->at(i));
+		if (dynamic_cast<CSOPHIA*>(e->obj))
+		{
+				continue;
+		}
+		if (e->t > 0 && e->t <= 1.0f)
+			coEvents.push_back(e);
+		else
+			delete e;
 	}
+	std::sort(coEvents.begin(), coEvents.end(), CCollisionEvent::compare);
 }
 
-void CSTUKA::SetState(int state)
+void CTANKBULLET::Render()
+{
+	if (state == CTANKBULLET_STATE_DIE)
+		return;
+	int ani;
+	switch (state)
+	{
+	case CTANKBULLET_STATE_FLYING:
+		if(vx > 0)
+			ani = CTANKBULLET_ANI_FLYING_RIGHT;
+		else
+			ani = CTANKBULLET_ANI_FLYING_LEFT;
+		break;
+	}
+
+	animation_set->at(ani)->Render(x, y);
+
+	//RenderBoundingBox();
+}
+
+void CTANKBULLET::SetState(int state)
 {
 	CGameObject::SetState(state);
 	switch (state)
 	{
-	case CSTUKA_STATE_WALKING:
-		vx = CSTUKA_WALKING_SPEED;
-		break;
-	case CSTUKA_STATE_ATTACK:
-		vy = CSTUKA_WALKING_SPEED;
-		break;
-	case STATE_DIE:
-		vy = DIE_PULL;
+	case CTANKBULLET_STATE_DIE:
+		vx = CTANKBULLET_STATE_DIE_SPEED;
+		vy = CTANKBULLET_STATE_DIE_SPEED;
 		break;
 
 	}
+
 }
