@@ -20,7 +20,7 @@ void EFFECT::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			switch_state = 0;
 		}
 	}
-	if(!active)
+	if (!active)
 	{
 		x = STORING_LOCATION;
 		y = STORING_LOCATION;
@@ -29,7 +29,7 @@ void EFFECT::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		if (((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->CheckKaboomMng())
 		{
-			this->SetPosition(playscene->GetKaboomMng()->getInterrupt_FiringPoisitionX(), playscene->GetKaboomMng()->getInterrupt_FiringPoisitionY());
+			this->SetPosition(playscene->GetKaboomMng()->getCEventPoisitionX(), playscene->GetKaboomMng()->getCEventPoisitionY());
 			playscene->DeleteKaboomMng();
 			active = true;
 			StartSwitch_state();
@@ -39,8 +39,8 @@ void EFFECT::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 void EFFECT::Render()
 {
-	if(active)
-	animation_set->at(0)->Render(x, y);
+	if (active)
+		animation_set->at(0)->Render(x, y);
 
 	//RenderBoundingBox();
 }

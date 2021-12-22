@@ -26,12 +26,16 @@
 #include "TANKBODY.h"
 #include "TANKTURRET.h"
 #include "EFFECT.h"
+#include "CBOOM.h"
 
 #include "Utils.h"
 #include "Game.h"
 #include <iostream>
 #include <fstream>
-
+#include "Utils.h"
+#include "Textures.h"
+#include "Sprites.h"
+#include "Portal.h"
 
 #define QUADTREE_SECTION_SETTINGS	1
 #define QUADTREE_SECTION_OBJECTS	2
@@ -64,7 +68,7 @@ public:
 	{
 		listObjects.push_back(obj);
 	}
-	int getVollunm(){
+	int getVollunm() {
 		return listObjects.size();
 	}
 	void Render();
@@ -83,9 +87,10 @@ protected:
 	int mapHeight;
 	Map* map;
 	CQuadTree* quadtree;
-	vector<CEvenType1*> InterruptBulletMng ;
+	vector<CEvenType1*> InterruptBulletMng;
 	vector<CEvenType1*> WormSpamMng;
 	vector<CEvenType1*> KaboomMng;
+	vector<CEvenType1*> BoomCarryMng;
 
 	void _ParseSection_TEXTURES(string line);
 	void _ParseSection_SPRITES(string line);
@@ -116,6 +121,37 @@ public:
 	int getMapheight()
 	{
 		return mapHeight;
+	}
+	/////////////////BoomCarryMng
+	void AddBoomCarryMng(float x, float y)
+	{
+		CEvenType1* obj = new CEvenType1(x, y);
+		this->BoomCarryMng.push_back(obj);
+	}
+	void CheckStackBoomCarryMng()
+	{
+		if (BoomCarryMng.at(0)->getCEventStack() < 4)
+		{
+			BoomCarryMng.at(0)->setCEventStack(BoomCarryMng.at(0)->getCEventStack() + 1);
+		}
+		else
+		{
+			DeleteBoomCarryMng();
+		}
+	}
+	CEvenType1* GetBoomCarryMng()
+	{
+		return BoomCarryMng.at(0);
+	}
+	bool CheckBoomCarryMng()
+	{
+		if (BoomCarryMng.size() != 0)
+			return true;
+		return false;
+	}
+	void DeleteBoomCarryMng()
+	{
+		this->BoomCarryMng.erase(BoomCarryMng.begin());
 	}
 	/////////////////KaboomMng
 	void AddKaboomMng(float x, float y)
@@ -189,4 +225,3 @@ public:
 	virtual void OnKeyUp(int KeyCode);
 	CPlayScenceKeyHandler(CScene* s) :CScenceKeyHandler(s) {};
 };
-

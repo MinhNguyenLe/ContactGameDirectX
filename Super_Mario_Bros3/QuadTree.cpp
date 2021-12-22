@@ -57,7 +57,7 @@ void CQuadTree::Plit() {
 
 bool CQuadTree::inRange(float ox, float oy, float x, float y, float width, float height)
 {
-	if (x <= ox && ox <= x + width && y <= oy && oy <= y + height)
+	if (x <= ox && ox <= x + width + CAM_X_BONUS && y <= oy && oy <= y + height)
 		return true;
 	return false;
 }
@@ -119,15 +119,15 @@ void CQuadTree::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_CGX680: obj = new CGX680(); break;
 	case OBJECT_TYPE_CGX680S: obj = new CGX680S(); break;
 	case OBJECT_TYPE_CSTUKA: obj = new CSTUKA(); break;
-	case OBJECT_TYPE_EYELET: 
+	case OBJECT_TYPE_EYELET:
 	{
 		float kill_point = atoi(tokens[4].c_str());
 		obj = new CEYELET(kill_point);
 	}
 	break;
 	case OBJECT_TYPE_CINTERCRUPT: obj = new CINTERRUPT(); break;
-	
-		
+
+
 	default:
 		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
 		return;
@@ -229,32 +229,22 @@ void CQuadTree::GetObjects(vector<LPGAMEOBJECT>& listObject, int CamX, int CamY)
 
 void CQuadTree::Pop(vector<LPGAMEOBJECT>& listObject, int CamX, int CamY)
 {
-	unsigned int  left, top, right, bottom;
-
-	left = (CamX);
-
-	right = (CamX + CGame::GetInstance()->GetScreenWidth());
-
-	top = (CamY);
-
-	bottom = (CamY + CGame::GetInstance()->GetScreenHeight());
-
 	if (this == NULL)
 		return;
 	if (isLeaf)
 	{
 		for (int i = 0; i < listObjects.size(); i++)
 		{
-			if (inRange(x + cellWidth, y + cellHeight, CamX, CamY, CGame::GetInstance()->GetScreenWidth(), CGame::GetInstance()->GetScreenHeight() + 100))
-			if (!listObjects[i]->GetActive())
-			{
-				float Ox, Oy;
-				listObjects[i]->GetOriginLocation(Ox, Oy);
-				/*if (!inRange(Ox, Oy, CamX, CamY, CGame::GetInstance()->GetScreenWidth(), CGame::GetInstance()->GetScreenHeight()))
-					listObjects[i]->reset();*/
-				listObject.push_back(listObjects[i]);
-				listObjects[i]->SetActive(true);
-			}
+			if (inRange(x + cellWidth, y + cellHeight, CamX, CamY, CGame::GetInstance()->GetScreenWidth(), CGame::GetInstance()->GetScreenHeight()))
+				if (!listObjects[i]->GetActive())
+				{
+					float Ox, Oy;
+					listObjects[i]->GetOriginLocation(Ox, Oy);
+					/*if (!inRange(Ox, Oy, CamX, CamY, CGame::GetInstance()->GetScreenWidth(), CGame::GetInstance()->GetScreenHeight()))
+						listObjects[i]->reset();*/
+					listObject.push_back(listObjects[i]);
+					listObjects[i]->SetActive(true);
+				}
 		}
 		return;
 	}
@@ -263,7 +253,7 @@ void CQuadTree::Pop(vector<LPGAMEOBJECT>& listObject, int CamX, int CamY)
 	BrachTR->Pop(listObject, CamX, CamY);
 	BrachBL->Pop(listObject, CamX, CamY);
 	BrachBR->Pop(listObject, CamX, CamY);
-		
+
 }
 
 void CQuadTree::Unload()
