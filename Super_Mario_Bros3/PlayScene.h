@@ -28,6 +28,7 @@
 #include "EFFECT.h"
 #include "JASON.h"
 #include "CBOOM.h"
+#include "NoCollisionObject.h"
 
 #include "Utils.h"
 #include "Game.h"
@@ -133,7 +134,7 @@ public:
 	}
 	void CheckStackBoomCarryMng()
 	{
-		if (BoomCarryMng.at(0)->getCEventStack() < 4)
+		if (BoomCarryMng.at(0)->getCEventStack() < 3)
 		{
 			BoomCarryMng.at(0)->setCEventStack(BoomCarryMng.at(0)->getCEventStack() + 1);
 		}
