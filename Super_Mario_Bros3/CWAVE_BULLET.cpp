@@ -1,7 +1,7 @@
 #include "CWAVE_BULLET.h"
 #include <algorithm>
 #include "PlayScene.h"
-#include "JASON.h"
+#include "PlayerJason.h"
 #include "Brick.h"
 
 CWAVE_BULLET::CWAVE_BULLET()
@@ -56,7 +56,7 @@ void CWAVE_BULLET::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 	if (isUsed == false)
 	{
-		JASON* JASON = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer2();
+		PlayerJason* JASON = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer2();
 		if (JASON->GetisFiring() == true && JASON->getWeapon() == 1)
 		{
 			if (JASON->GetisAlreadyFired() == false)
@@ -162,7 +162,7 @@ void CWAVE_BULLET::CalcPotentialCollisions(
 	for (UINT i = 0; i < coObjects->size(); i++)
 	{
 		LPCOLLISIONEVENT e = SweptAABBEx(coObjects->at(i));
-		if (dynamic_cast<JASON*>(e->obj))
+		if (dynamic_cast<PlayerJason*>(e->obj))
 		{
 			continue;
 		}

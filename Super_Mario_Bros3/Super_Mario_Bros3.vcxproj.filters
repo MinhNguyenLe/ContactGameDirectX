@@ -129,19 +129,19 @@
     <ClInclude Include="CREDWORM.h">
       <Filter>Header Files\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="CTANKWHEELS.h">
+    <ClInclude Include="PlayerTankWheel.h">
       <Filter>Header Files\Player</Filter>
     </ClInclude>
-    <ClInclude Include="SOPHIA.h">
+    <ClInclude Include="PlayerSophia.h">
       <Filter>Header Files\Player</Filter>
     </ClInclude>
-    <ClInclude Include="TANKBODY.h">
+    <ClInclude Include="PlayerTankBody.h">
       <Filter>Header Files\Player</Filter>
     </ClInclude>
     <ClInclude Include="DF.h">
       <Filter>Header Files\OtherObj</Filter>
     </ClInclude>
-    <ClInclude Include="TANKTURRET.h">
+    <ClInclude Include="PlayerTankturret.h">
       <Filter>Header Files\Player</Filter>
     </ClInclude>
     <ClInclude Include="CEvenType1.h">
@@ -153,7 +153,7 @@
     <ClInclude Include="CBOOM.h">
       <Filter>Header Files\OtherObj</Filter>
     </ClInclude>
-    <ClInclude Include="JASON.h">
+    <ClInclude Include="PlayerJason.h">
       <Filter>Header Files\Player</Filter>
     </ClInclude>
     <ClInclude Include="NoCollisionObject.h">
@@ -269,16 +269,16 @@
     <ClCompile Include="CREDWORM.cpp">
       <Filter>Source Files\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="CTANKWHEELS.cpp">
+    <ClCompile Include="PlayerTankWheel.cpp">
       <Filter>Source Files\Player</Filter>
     </ClCompile>
-    <ClCompile Include="SOPHIA.cpp">
+    <ClCompile Include="PlayerSophia.cpp">
       <Filter>Source Files\Player</Filter>
     </ClCompile>
-    <ClCompile Include="TANKBODY.cpp">
+    <ClCompile Include="PlayerTankBody.cpp">
       <Filter>Source Files\Player</Filter>
     </ClCompile>
-    <ClCompile Include="TANKTURRET.cpp">
+    <ClCompile Include="PlayerTankturret.cpp">
       <Filter>Source Files\Player</Filter>
     </ClCompile>
     <ClCompile Include="EFFECT.cpp">
@@ -287,7 +287,7 @@
     <ClCompile Include="CBOOM.cpp">
       <Filter>Source Files\OtherObj</Filter>
     </ClCompile>
-    <ClCompile Include="JASON.cpp">
+    <ClCompile Include="PlayerJason.cpp">
       <Filter>Source Files\Player</Filter>
     </ClCompile>
     <ClCompile Include="NoCollisionObject.cpp">

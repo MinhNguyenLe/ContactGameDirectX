@@ -1,7 +1,7 @@
 #include "CTANKBULLET.h"
 #include <algorithm>
 #include "PlayScene.h"
-#include "SOPHIA.h"
+#include "PlayerSophia.h"
 #include "Brick.h"
 
 CTANKBULLET::CTANKBULLET()
@@ -45,7 +45,7 @@ void CTANKBULLET::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 	if (isUsed == false)
 	{
-		CSOPHIA* SOPHIA = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+		PlayerSophia* SOPHIA = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 		if (SOPHIA->GetisFiring() == true)
 		{
 			if (SOPHIA->GetisAlreadyFired() == false)
@@ -116,7 +116,7 @@ void CTANKBULLET::CalcPotentialCollisions(
 	for (UINT i = 0; i < coObjects->size(); i++)
 	{
 		LPCOLLISIONEVENT e = SweptAABBEx(coObjects->at(i));
-		if (dynamic_cast<CSOPHIA*>(e->obj))
+		if (dynamic_cast<PlayerSophia*>(e->obj))
 		{
 				continue;
 		}

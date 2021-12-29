@@ -4,11 +4,11 @@
 #include "Scene.h"
 #include "GameObject.h"
 #include "Brick.h"
-#include "SOPHIA.h"
+#include "PlayerSophia.h"
 #include "Eye.h"
 #include "Koopas.h"
 #include "Map.h"
-#include "CTANKWHEELS.h"
+#include "PlayerTankWheel.h"
 #include "MapObj.h"
 #include "CLaserGuard.h"
 #include "CBallCarry.h"
@@ -23,10 +23,10 @@
 #include "CEvenType1.h"
 #include "CINTERRUPT_BULLET.h"
 #include "CREDWORM.h"
-#include "TANKBODY.h"
-#include "TANKTURRET.h"
+#include "PlayerTankBody.h"
+#include "PlayerTankturret.h"
 #include "EFFECT.h"
-#include "JASON.h"
+#include "PlayerJason.h"
 #include "CBOOM.h"
 #include "NoCollisionObject.h"
 
@@ -92,8 +92,8 @@ public:
 class CPlayScene : public CScene
 {
 protected:
-	CSOPHIA* player;				// A play scene has to have player, right? 
-	JASON* player2;
+	PlayerSophia* player;				// A play scene has to have player, right? 
+	PlayerJason* player2;
 	vector<LPGAMEOBJECT> objects;
 	vector<LPGAMEOBJECT> secondLayer;
 	int mapHeight;
@@ -131,8 +131,8 @@ public:
 	bool IsInUseArea(float Ox, float Oy);
 	bool IsInside(float Ox, float Oy, float xRange, float yRange, float tx, float ty);
 
-	CSOPHIA* GetPlayer() { return player; }
-	JASON* GetPlayer2() { return player2; }
+	PlayerSophia* GetPlayer() { return player; }
+	PlayerJason* GetPlayer2() { return player2; }
 
 	void StartFilming()
 	{

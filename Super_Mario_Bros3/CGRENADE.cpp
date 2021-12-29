@@ -1,7 +1,7 @@
 #include "CGRENADE.h"
 #include <algorithm>
 #include "PlayScene.h"
-#include "JASON.h"
+#include "PlayerJason.h"
 #include "Brick.h"
 
 CGRENADE::CGRENADE()
@@ -42,7 +42,7 @@ void CGRENADE::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 	if (isUsed == false)
 	{
-		JASON* JASON = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer2();
+		PlayerJason* JASON = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer2();
 		if (JASON->GetisFiring() == true && JASON->getWeapon() == -1)
 		{
 			if (JASON->GetisAlreadyFired() == false)
@@ -135,7 +135,7 @@ void CGRENADE::CalcPotentialCollisions(
 	for (UINT i = 0; i < coObjects->size(); i++)
 	{
 		LPCOLLISIONEVENT e = SweptAABBEx(coObjects->at(i));
-		if (dynamic_cast<JASON*>(e->obj))
+		if (dynamic_cast<PlayerJason*>(e->obj))
 		{
 			continue;
 		}

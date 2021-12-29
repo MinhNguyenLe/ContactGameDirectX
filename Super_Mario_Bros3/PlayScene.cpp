@@ -230,9 +230,9 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 			DebugOut(L"[ERROR] SOPHIA object was created before!\n");
 			return;
 		}
-		obj = new CSOPHIA(x, getMapheight() - y);
+		obj = new PlayerSophia(x, getMapheight() - y);
 
-		player = (CSOPHIA*)obj;
+		player = (PlayerSophia*)obj;
 
 		DebugOut(L"[INFO] Player object created!\n");
 
@@ -243,9 +243,9 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 			DebugOut(L"[ERROR] JASON object was created before!\n");
 			return;
 		}
-		obj = new JASON(x, getMapheight() - y);
+		obj = new PlayerJason(x, getMapheight() - y);
 
-		player2 = (JASON*)obj;
+		player2 = (PlayerJason*)obj;
 
 		DebugOut(L"[INFO] Player object created!\n");
 
@@ -258,7 +258,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_TANK_WHEEL:
 	{
 		float part = atof(tokens[4].c_str());
-		obj = new TANKWHEEL(part);
+		obj = new PlayerTankWheel(part);
 	}
 	break;
 	case OBJECT_TYPE_CLASER_BULLET:
@@ -268,7 +268,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	break;
 	case OBJECT_TYPE_TANK_BODY:
 	{
-		obj = new TANKBODY();
+		obj = new PlayerTankBody();
 	}
 	break;
 	case OBJECT_TYPE_JASON_BULLET_1:
@@ -279,7 +279,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 
 	case OBJECT_TYPE_TANK_TURRET:
 	{
-		obj = new TANKTURRET();
+		obj = new PlayerTankturret();
 	}
 	break;
 
@@ -544,7 +544,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 
 	if (((CPlayScene*)scence)->GetPlayer())
 	{
-		CSOPHIA* player = ((CPlayScene*)scence)->GetPlayer();
+		PlayerSophia* player = ((CPlayScene*)scence)->GetPlayer();
 		switch (KeyCode)
 		{
 		case DIK_SPACE:
@@ -570,7 +570,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	}
 
 	else {
-		JASON* player = ((CPlayScene*)scence)->GetPlayer2();
+		PlayerJason* player = ((CPlayScene*)scence)->GetPlayer2();
 		switch (KeyCode)
 		{
 		case DIK_SPACE:
@@ -591,7 +591,7 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 	CGame* game = CGame::GetInstance();
 	if (((CPlayScene*)scence)->GetPlayer())
 	{
-		CSOPHIA* player = ((CPlayScene*)scence)->GetPlayer();
+		PlayerSophia* player = ((CPlayScene*)scence)->GetPlayer();
 		switch (KeyCode)
 		{
 		case DIK_A:
@@ -613,7 +613,7 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 	}
 		
 	else {
-		JASON* player = ((CPlayScene*)scence)->GetPlayer2();
+		PlayerJason* player = ((CPlayScene*)scence)->GetPlayer2();
 		switch (KeyCode)
 		{
 		case DIK_A:
@@ -636,7 +636,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 
 	if (((CPlayScene*)scence)->GetPlayer())
 	{
-		CSOPHIA* player = ((CPlayScene*)scence)->GetPlayer();
+		PlayerSophia* player = ((CPlayScene*)scence)->GetPlayer();
 		// disable control key when SOPHIA die 
 		if (player->GetState() == SOPHIA_STATE_DIE) return;
 		if (game->IsKeyDown(DIK_RIGHT))
@@ -648,7 +648,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 	}
 
 	else {
-		JASON* player = ((CPlayScene*)scence)->GetPlayer2();
+		PlayerJason* player = ((CPlayScene*)scence)->GetPlayer2();
 		// disable control key when SOPHIA die 
 		if (player->GetState() == SOPHIA_STATE_DIE) return;
 		if (game->IsKeyDown(DIK_RIGHT))
