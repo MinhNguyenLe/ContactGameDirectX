@@ -1,11 +1,11 @@
-#include "CBALLCARRY.h"
+#include "BallCarry.h"
 
-CBALLCARRY::CBALLCARRY()
+BallCarry::BallCarry()
 {
 	SetState(STATE_IDLE);
 }
 
-void CBALLCARRY::GetBoundingBox(float& left, float& top, float& right, float& bottom)
+void BallCarry::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
 	left = x;
 	top = y;
@@ -17,7 +17,7 @@ void CBALLCARRY::GetBoundingBox(float& left, float& top, float& right, float& bo
 		bottom = y + CBALLCARRY_BBOX_HEIGHT;
 }
 
-void CBALLCARRY::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
+void BallCarry::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	CPlayScene* playscene = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene());
 	CGameObject::Update(dt, coObjects);
@@ -92,7 +92,7 @@ void CBALLCARRY::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 }
 
-void CBALLCARRY::CalcPotentialCollisions(
+void BallCarry::CalcPotentialCollisions(
 	vector<LPGAMEOBJECT>* coObjects,
 	vector<LPCOLLISIONEVENT>& coEvents)
 {
@@ -126,7 +126,7 @@ void CBALLCARRY::CalcPotentialCollisions(
 	}
 }
 
-void CBALLCARRY::Render()
+void BallCarry::Render()
 {
 	int ani = 0;
 	if (state != STATE_DIE)
@@ -147,7 +147,7 @@ void CBALLCARRY::Render()
 	}
 }
 
-void CBALLCARRY::SetState(int state)
+void BallCarry::SetState(int state)
 {
 	CGameObject::SetState(state);
 	switch (state)

@@ -93,7 +93,7 @@
     <ClInclude Include="Interrupt.h">
       <Filter>Header Files\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="CBallbot.h">
+    <ClInclude Include="BallBot.h">
       <Filter>Header Files\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="CDrap.h">
@@ -108,13 +108,13 @@
     <ClInclude Include="CLaserGuard.h">
       <Filter>Header Files\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="CStuka.h">
+    <ClInclude Include="Stuka.h">
       <Filter>Header Files\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="Eyelet.h">
       <Filter>Header Files\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="CBallCarry.h">
+    <ClInclude Include="BallCarry.h">
       <Filter>Header Files\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="MapObj.h">
@@ -126,7 +126,7 @@
     <ClInclude Include="CINTERRUPT_BULLET.h">
       <Filter>Header Files\OtherObj</Filter>
     </ClInclude>
-    <ClInclude Include="CREDWORM.h">
+    <ClInclude Include="CredWorm.h">
       <Filter>Header Files\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="PlayerTankWheel.h">
@@ -168,7 +168,7 @@
     <ClInclude Include="CGX_BULLET.h">
       <Filter>Header Files\OtherObj</Filter>
     </ClInclude>
-    <ClInclude Include="CLASER_BULLET.h">
+    <ClInclude Include="ClaserBullet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="sound.h">
@@ -230,7 +230,7 @@
     <ClCompile Include="Brick.cpp">
       <Filter>Source Files\OtherObj</Filter>
     </ClCompile>
-    <ClCompile Include="CBallbot.cpp">
+    <ClCompile Include="BallBot.cpp">
       <Filter>Source Files\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="CDrap.cpp">
@@ -245,7 +245,7 @@
     <ClCompile Include="CLaserGuard.cpp">
       <Filter>Source Files\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="CStuka.cpp">
+    <ClCompile Include="Stuka.cpp">
       <Filter>Source Files\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="Eyelet.cpp">
@@ -254,7 +254,7 @@
     <ClCompile Include="Interrupt.cpp">
       <Filter>Source Files\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="CBallCarry.cpp">
+    <ClCompile Include="BallCarry.cpp">
       <Filter>Source Files\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="MapObj.cpp">
@@ -266,7 +266,7 @@
     <ClCompile Include="CINTERRUPT_BULLET.cpp">
       <Filter>Source Files\OtherObj</Filter>
     </ClCompile>
-    <ClCompile Include="CREDWORM.cpp">
+    <ClCompile Include="CredWorm.cpp">
       <Filter>Source Files\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="PlayerTankWheel.cpp">
@@ -302,7 +302,7 @@
     <ClCompile Include="CGRENADE.cpp">
       <Filter>Source Files\OtherObj</Filter>
     </ClCompile>
-    <ClCompile Include="CLASER_BULLET.cpp">
+    <ClCompile Include="ClaserBullet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="sound.cpp">

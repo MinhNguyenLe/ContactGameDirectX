@@ -1,11 +1,11 @@
-#include "CBALLBOT.h"
+#include "BallBot.h"
 #include "PlayScene.h"
-CBALLBOT::CBALLBOT()
+BallBot::BallBot()
 {
 	SetState(CBALLBOT_STATE_IDLE);
 }
 
-void CBALLBOT::GetBoundingBox(float& left, float& top, float& right, float& bottom)
+void BallBot::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
 	
 	left = x;
@@ -22,7 +22,7 @@ void CBALLBOT::GetBoundingBox(float& left, float& top, float& right, float& bott
 	}
 }
 
-void CBALLBOT::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
+void BallBot::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	CPlayScene* playscene = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene());
 	CGameObject::Update(dt, coObjects);
@@ -106,7 +106,7 @@ void CBALLBOT::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 }
 
-void CBALLBOT::CalcPotentialCollisions(
+void BallBot::CalcPotentialCollisions(
 	vector<LPGAMEOBJECT>* coObjects,
 	vector<LPCOLLISIONEVENT>& coEvents)
 {
@@ -125,7 +125,7 @@ void CBALLBOT::CalcPotentialCollisions(
 	std::sort(coEvents.begin(), coEvents.end(), CCollisionEvent::compare);
 }
 
-void CBALLBOT::Render()
+void BallBot::Render()
 {
 	int ani = 0;
 	if (state != CBALLBOT_STATE_DIE)
@@ -144,7 +144,7 @@ void CBALLBOT::Render()
 	
 }
 
-void CBALLBOT::SetState(int state)
+void BallBot::SetState(int state)
 {
 	CGameObject::SetState(state);
 	switch (state)

@@ -263,7 +263,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	break;
 	case OBJECT_TYPE_CLASER_BULLET:
 	{
-		obj = new CLASER_BULLET();
+		obj = new ClaserBullet();
 	}
 	break;
 	case OBJECT_TYPE_TANK_BODY:
@@ -309,7 +309,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	}
 	break;
 	case OBJECT_TYPE_CINTERCRUPT_BULLET: obj = new CINTERRUPT_BULLET(); break;
-	case OBJECT_TYPE_RED_WORM: obj = new CREDWORM(); break;
+	case OBJECT_TYPE_RED_WORM: obj = new CredWorm(); break;
 		
 	break;
 	
