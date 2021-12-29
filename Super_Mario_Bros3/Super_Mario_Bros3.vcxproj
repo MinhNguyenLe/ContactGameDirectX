@@ -163,6 +163,7 @@
     <ClInclude Include="CLaserGuard.h" />
     <ClInclude Include="CLASER_BULLET.h" />
     <ClInclude Include="CREDWORM.h" />
+    <ClInclude Include="CSTATBAR.h" />
     <ClInclude Include="CStuka.h" />
     <ClInclude Include="CTANKBULLET.h" />
     <ClInclude Include="CWAVE_BULLET.h" />
@@ -173,10 +174,12 @@
     <ClInclude Include="CEvenType1.h" />
     <ClInclude Include="JASON.h" />
     <ClInclude Include="Map.h" />
+    <ClInclude Include="MapCamera.h" />
     <ClInclude Include="MapObj.h" />
     <ClInclude Include="NoCollisionObject.h" />
     <ClInclude Include="QuadTree.h" />
     <ClInclude Include="CTANKWHEELS.h" />
+    <ClInclude Include="sound.h" />
     <ClInclude Include="TANKBODY.h" />
     <ClInclude Include="TANKTURRET.h" />
     <ClInclude Include="Utils.h" />
@@ -207,6 +210,7 @@
     <ClCompile Include="CLaserGuard.cpp" />
     <ClCompile Include="CLASER_BULLET.cpp" />
     <ClCompile Include="CREDWORM.cpp" />
+    <ClCompile Include="CSTATBAR.cpp" />
     <ClCompile Include="CStuka.cpp" />
     <ClCompile Include="CTANKBULLET.cpp" />
     <ClCompile Include="CWAVE_BULLET.cpp" />
@@ -217,6 +221,7 @@
     <ClCompile Include="JASON.cpp" />
     <ClCompile Include="Koopas.cpp" />
     <ClCompile Include="Map.cpp" />
+    <ClCompile Include="MapCamera.cpp" />
     <ClCompile Include="MapObj.cpp" />
     <ClCompile Include="NoCollisionObject.cpp" />
     <ClCompile Include="PlayScene.cpp" />
@@ -224,6 +229,7 @@
     <ClCompile Include="QuadTree.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="CTANKWHEELS.cpp" />
+    <ClCompile Include="sound.cpp" />
     <ClCompile Include="TANKBODY.cpp" />
     <ClCompile Include="TANKTURRET.cpp" />
     <ClCompile Include="Utils.cpp" />
