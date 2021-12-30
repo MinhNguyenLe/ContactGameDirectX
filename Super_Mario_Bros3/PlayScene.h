@@ -4,11 +4,11 @@
 #include "Scene.h"
 #include "GameObject.h"
 #include "Brick.h"
-#include "PlayerSophia.h"
+#include "SoPhia.h"
 #include "Eye.h"
 #include "Koopas.h"
 #include "Map.h"
-#include "PlayerTankWheel.h"
+#include "TankWheel.h"
 #include "MapObj.h"
 #include "CLaserGuard.h"
 #include "BallCarry.h"
@@ -16,17 +16,17 @@
 #include "CDRAP.h"
 #include "CGX680.h"
 #include "CGX680S.h"
-#include "Stuka.h"
+#include "CSTUKA.h"
 #include "Eyelet.h"
 #include "Interrupt.h"
-#include "CTANKBULLET.h"
+#include "TankBullet.h"
 #include "CEvenType1.h"
-#include "CINTERRUPT_BULLET.h"
+#include "CinterruptBullet.h"
 #include "CredWorm.h"
-#include "PlayerTankBody.h"
-#include "PlayerTankturret.h"
+#include "TankBody.h"
+#include "TankTurret.h"
 #include "EFFECT.h"
-#include "PlayerJason.h"
+#include "Jason.h"
 #include "CBOOM.h"
 #include "NoCollisionObject.h"
 
@@ -39,12 +39,15 @@
 #include "Sprites.h"
 #include "Portal.h"
 #include "DF.h"
-#include "CWAVE_BULLET.h"
+#include "WaveBullet.h"
 #include "CGRENADE.h"
 #include "CGX_BULLET.h"
 #include "ClaserBullet.h"
 #include "MapCamera.h"
-#include "CSTATBAR.h"
+#include "StatBar.h"
+#include "MiniJason.h"
+#include "TankDoor.h"
+#include "Items.h"
 
 #define QUADTREE_SECTION_SETTINGS	1
 #define QUADTREE_SECTION_OBJECTS	2
@@ -92,8 +95,9 @@ public:
 class CPlayScene : public CScene
 {
 protected:
-	PlayerSophia* player;				// A play scene has to have player, right? 
-	PlayerJason* player2;
+	SoPhia* player;				// A play scene has to have player, right? 
+	Jason* player2;
+	MiniJason* player3;
 	vector<LPGAMEOBJECT> objects;
 	vector<LPGAMEOBJECT> secondLayer;
 	int mapHeight;
@@ -104,12 +108,15 @@ protected:
 	vector<CEvenType1*> KaboomMng;
 	vector<CEvenType1*> BoomCarryMng;
 	vector<CEvenType1*> CGXMng;
+	vector<CEvenType1*> ItemsMng;
 	vector<MapCamera*> MapCam;
 	
 	int filming_duration = 1000;
 	DWORD filming_start = 0;
 
 	int camState = 0;
+
+	bool piloting = true;
 
 	void _ParseSection_TEXTURES(string line);
 	void _ParseSection_SPRITES(string line);
@@ -131,9 +138,19 @@ public:
 	bool IsInUseArea(float Ox, float Oy);
 	bool IsInside(float Ox, float Oy, float xRange, float yRange, float tx, float ty);
 
-	PlayerSophia* GetPlayer() { return player; }
-	PlayerJason* GetPlayer2() { return player2; }
+	SoPhia* GetPlayer() { return player; }
+	Jason* GetPlayer2() { return player2; }
+	MiniJason* GetPlayer3() { return player3; }
 
+	void setpiloting(int value)
+	{
+		piloting = value;
+	}
+
+	int getpiloting()
+	{
+		return piloting;
+	}
 	void StartFilming()
 	{
 		if (filming_start == 0)
@@ -156,6 +173,27 @@ public:
 	int getMapheight()
 	{
 		return mapHeight;
+	}
+	
+	/////////////////ItemsMng
+	void AddItemsMng(float x, float y, int num)
+	{
+		CEvenType1* obj = new CEvenType1(x, y, num);
+		this->ItemsMng.push_back(obj);
+	}
+	CEvenType1* GetItemsMng()
+	{
+		return ItemsMng.at(0);
+	}
+	bool CheckItemsMng()
+	{
+		if (ItemsMng.size() != 0)
+			return true;
+		return false;
+	}
+	void DeleteItemsMng()
+	{
+		this->ItemsMng.erase(ItemsMng.begin());
 	}
 	/////////////////CGXMng
 	void AddCGXMng(float x, float y, float vx, float vy)

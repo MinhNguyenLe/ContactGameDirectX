@@ -1,16 +1,16 @@
-#include "CWAVE_BULLET.h"
+#include "WaveBullet.h"
 #include <algorithm>
 #include "PlayScene.h"
-#include "PlayerJason.h"
+#include "Jason.h"
 #include "Brick.h"
 
-CWAVE_BULLET::CWAVE_BULLET()
+WaveBullet::WaveBullet()
 {
 	SetState(CWAVE_BULLET_STATE_FLYING);
 	nx = 0;
 }
 
-void CWAVE_BULLET::GetBoundingBox(float& left, float& top, float& right, float& bottom)
+void WaveBullet::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
 	left = x;
 	top = y;
@@ -18,8 +18,9 @@ void CWAVE_BULLET::GetBoundingBox(float& left, float& top, float& right, float& 
 	bottom = y + CWAVE_BULLET_BBOX_HEIGHT;
 }
 
-void CWAVE_BULLET::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
+void WaveBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
+	CGame* game = CGame::GetInstance();
 	if ((DWORD)GetTickCount64() - reset_start > CWAVE_BULLET_RESET_TIME)
 	{
 		state = CWAVE_BULLET_STATE_DIE;
@@ -56,7 +57,7 @@ void CWAVE_BULLET::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 	if (isUsed == false)
 	{
-		PlayerJason* JASON = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer2();
+		Jason* JASON = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer2();
 		if (JASON->GetisFiring() == true && JASON->getWeapon() == 1)
 		{
 			if (JASON->GetisAlreadyFired() == false)
@@ -140,10 +141,9 @@ void CWAVE_BULLET::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			LPCOLLISIONEVENT e = coEventsResult[i];
 			if (!dynamic_cast<CBrick*>(e->obj)) 
 			{
-				(e->obj)->SetState(STATE_DIE);
-				(e->obj)->SetisAlive(false);
+				(e->obj)->setheath((e->obj)->Getheath() - game->Getattack());
 				SetState(CWAVE_BULLET_STATE_DIE);
-				((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddKaboomMng((e->obj)->GetPositionX(), (e->obj)->GetPositionY());
+				//((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddKaboomMng((e->obj)->GetPositionX(), (e->obj)->GetPositionY());
 			}
 			else {
 					((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddKaboomMng(x, y);
@@ -155,14 +155,18 @@ void CWAVE_BULLET::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 }
 
-void CWAVE_BULLET::CalcPotentialCollisions(
+void WaveBullet::CalcPotentialCollisions(
 	vector<LPGAMEOBJECT>* coObjects,
 	vector<LPCOLLISIONEVENT>& coEvents)
 {
 	for (UINT i = 0; i < coObjects->size(); i++)
 	{
 		LPCOLLISIONEVENT e = SweptAABBEx(coObjects->at(i));
-		if (dynamic_cast<PlayerJason*>(e->obj))
+		if (dynamic_cast<Jason*>(e->obj))
+		{
+			continue;
+		}
+		if (dynamic_cast<Items*>(e->obj))
 		{
 			continue;
 		}
@@ -174,7 +178,7 @@ void CWAVE_BULLET::CalcPotentialCollisions(
 	std::sort(coEvents.begin(), coEvents.end(), CCollisionEvent::compare);
 }
 
-void CWAVE_BULLET::Render()
+void WaveBullet::Render()
 {
 	if (state == CWAVE_BULLET_STATE_DIE)
 		return;
@@ -184,7 +188,7 @@ void CWAVE_BULLET::Render()
 	//RenderBoundingBox();
 }
 
-void CWAVE_BULLET::SetState(int state)
+void WaveBullet::SetState(int state)
 {
 	CGameObject::SetState(state);
 	switch (state)

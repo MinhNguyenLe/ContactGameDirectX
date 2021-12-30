@@ -9,6 +9,7 @@
 
 #define DIE_PULL 0.2f
 #define STATE_DIE 200
+#define STATE_OVER 2000
 #define STATE_IDLE 100
 
 using namespace std;
@@ -75,7 +76,32 @@ public:
 
 	bool isOriginObj = false;
 
+	int heath = 100;
+
+	bool spammed = false;
+
 public:
+
+	bool Getspammed()
+	{
+		return spammed;
+	}
+	void setspammed(bool value)
+	{
+		spammed = value;
+	}
+	int Getheath()
+	{
+		return heath;
+	}
+	void setheath(int value)
+	{
+		heath = value;
+		if (heath < 0)
+			heath = 0;
+		if (heath == 0)
+			SetState(STATE_DIE);
+	}
 	void SetPosition(float x, float y) { this->x = x, this->y = y; }
 	void SetSpeed(float vx = 0, float vy = 0) { this->vx = vx, this->vy = vy; }
 	void GetPosition(float& x, float& y) { x = this->x; y = this->y; }

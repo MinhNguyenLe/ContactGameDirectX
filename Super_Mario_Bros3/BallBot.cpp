@@ -7,7 +7,6 @@ BallBot::BallBot()
 
 void BallBot::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
-	
 	left = x;
 	top = y;
 	right = x + CBALLBOT_BBOX_WIDTH;
@@ -30,79 +29,101 @@ void BallBot::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	vector<LPCOLLISIONEVENT> coEventsResult;
 
 	coEvents.clear();
-	if (!triggered) {
-	if (switch_state != 0 && state != CBALLBOT_STATE_IDLE)
+
+	if (!spammed && state == STATE_DIE)
 	{
-		if ((DWORD)GetTickCount64() - pre_tickcount >= 50)
-		{
-			tickcount_diff += (DWORD)GetTickCount64() - pre_tickcount;
-		}
+		((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddKaboomMng(x, y);
+		int chance = rand() % 100;
+		srand(time(NULL));
+		if (chance >= 70)
+			playscene->AddItemsMng(x, y, 0);
+		spammed = true;
+	}
 
-		pre_tickcount = (DWORD)GetTickCount64();
-
-		if ((DWORD)GetTickCount64() - switch_state >= CBALLBOT_SWITCH_STATE_TIME + tickcount_diff)
+	if (!triggered) {
+		if (switch_state != 0 && state != CBALLBOT_STATE_IDLE)
 		{
-			SetState(CBALLBOT_STATE_FLY_UP);
-			if (x > playscene->GetPlayer()->GetPositionX())
+			if ((DWORD)GetTickCount64() - pre_tickcount >= 50)
 			{
-				vx = -2*CBALLBOT_FLYING_SPEED;
+				tickcount_diff += (DWORD)GetTickCount64() - pre_tickcount;
 			}
-			else 
+
+			pre_tickcount = (DWORD)GetTickCount64();
+
+			if ((DWORD)GetTickCount64() - switch_state >= CBALLBOT_SWITCH_STATE_TIME + tickcount_diff)
 			{
-				vx = 2 * CBALLBOT_FLYING_SPEED;
-			}
+				SetState(CBALLBOT_STATE_FLY_UP);
+				if (x > playscene->GetPlayer()->GetPositionX())
+				{
+					vx = -2 * CBALLBOT_FLYING_SPEED;
+				}
+				else
+				{
+					vx = 2 * CBALLBOT_FLYING_SPEED;
+				}
 				switch_state = 0;
 				tickcount_diff = 0;
-		}
-	}
-
-	if (state == CBALLBOT_STATE_IDLE && playscene->IsInside(x - 20, y, x + 20, y + 100, playscene->GetPlayer()->GetPositionX(), playscene->GetPlayer()->GetPositionY()))
-	{
-		SetState(CBALLBOT_STATE_FALLING);
-		StartSwitch_state();
-	}
-
-	if (state != CBALLBOT_STATE_DIE)
-		CalcPotentialCollisions(coObjects, coEvents);
-
-	// No collision occured, proceed normally
-	if (coEvents.size() == 0)
-	{
-		x += dx;
-		y += dy;
-	}
-	else
-	{
-		float min_tx, min_ty, nx = 0, ny;
-		float rdx = 0;
-		float rdy = 0;
-
-		// TODO: This is a very ugly designed function!!!!
-		FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
-
-		for (UINT i = 0; i < coEventsResult.size(); i++)
-		{
-			LPCOLLISIONEVENT e = coEventsResult[i];
-			if (dynamic_cast<CBrick*>(e->obj)) 
-			{
-				if (ny < 0 && nx == 0) 
-				{
-					SetState(CBALLBOT_STATE_IDLE);
-					switch_state = 0;
-					tickcount_diff = 0;
-					pre_tickcount = 0;
-					triggered = true;
-				}
-				if (nx != 0)
-				{
-					vx = 0;
-				}
 			}
-
 		}
 
-		for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
-	}
+		if (state == CBALLBOT_STATE_IDLE && playscene->IsInside(x - 20, y, x + 20, y + 100, playscene->GetPlayer()->GetPositionX(), playscene->GetPlayer()->GetPositionY()))
+		{
+			SetState(CBALLBOT_STATE_FALLING);
+			StartSwitch_state();
+		}
+
+		if (state != CBALLBOT_STATE_DIE)
+			CalcPotentialCollisions(coObjects, coEvents);
+
+		// No collision occured, proceed normally
+		if (coEvents.size() == 0)
+		{
+			x += dx;
+			y += dy;
+		}
+		else
+		{
+			float min_tx, min_ty, nx = 0, ny;
+			float rdx = 0;
+			float rdy = 0;
+
+			// TODO: This is a very ugly designed function!!!!
+			FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
+
+			for (UINT i = 0; i < coEventsResult.size(); i++)
+			{
+				LPCOLLISIONEVENT e = coEventsResult[i];
+				if (dynamic_cast<CBrick*>(e->obj))
+				{
+					if (ny < 0 && nx == 0)
+					{
+						SetState(CBALLBOT_STATE_IDLE);
+						switch_state = 0;
+						tickcount_diff = 0;
+						pre_tickcount = 0;
+						triggered = true;
+					}
+					if (nx != 0)
+					{
+						vx = 0;
+					}
+				}
+				CGame* game = CGame::GetInstance();
+				if (dynamic_cast<SoPhia*>(e->obj) && !playscene->GetPlayer()->getUntouchable())
+				{
+					playscene->GetPlayer()->StartUntouchable();
+					game->setheath(game->Getheath() - 100);
+				}
+
+			}
+			CGame* game = CGame::GetInstance();
+			if (playscene->IsInside(x - SOPHIA_BIG_BBOX_WIDTH, y - SOPHIA_BIG_BBOX_HEIGHT, x + CBALLBOT_BBOX_WIDTH, y + CBALLBOT_BBOX_HEIGHT, playscene->GetPlayer()->GetPositionX(), playscene->GetPlayer()->GetPositionY()) && !playscene->GetPlayer()->getUntouchable())
+			{
+				playscene->GetPlayer()->StartUntouchable();
+				game->setheath(game->Getheath() - 100);
+			}
+			for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
+		}
 	}
 }
 
@@ -118,7 +139,10 @@ void BallBot::CalcPotentialCollisions(
 			continue;
 		}
 		if (e->t > 0 && e->t <= 1.0f)
+		{
+			//if (dynamic_cast<CSOPHIA*>(e->obj))
 			coEvents.push_back(e);
+		}
 		else
 			delete e;
 	}
@@ -137,11 +161,11 @@ void BallBot::Render()
 		}
 		if (vx == 0)
 			ani = pre_ani;
-		
+
 		animation_set->at(ani)->Render(x, y);
 		//RenderBoundingBox();
 	}
-	
+
 }
 
 void BallBot::SetState(int state)
@@ -154,7 +178,7 @@ void BallBot::SetState(int state)
 		vy = 0;
 		break;
 	case CBALLBOT_STATE_FALLING:
-		vy = -2*CBALLBOT_FLYING_SPEED;
+		vy = -2 * CBALLBOT_FLYING_SPEED;
 		vx = 0;
 		break;
 	case CBALLBOT_STATE_FLY_UP:
@@ -162,7 +186,7 @@ void BallBot::SetState(int state)
 		vx = 0;
 		break;
 	case CBALLBOT_STATE_DIE:
-		vy = -10*DIE_PULL;
+		vy = -10 * DIE_PULL;
 		break;
 	}
 }

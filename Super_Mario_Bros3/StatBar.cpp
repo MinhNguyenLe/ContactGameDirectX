@@ -1,13 +1,13 @@
-#include "CSTATBAR.h"
+#include "StatBar.h"
 #include"Game.h"
 #include"Scene.h"
 
-CSTATBAR::CSTATBAR(int type)
+StatBar::StatBar(int type)
 {
 	this->type = type;
 }
 
-void CSTATBAR::Render()
+void StatBar::Render()
 {
 	CGame* game = CGame::GetInstance();
 	int stat = game->Getheath();
@@ -21,6 +21,6 @@ void CSTATBAR::Render()
 	animation_set->at(ani)->Render(x, y, 255, true);
 	//RenderBoundingBox();
 }
-void CSTATBAR::GetBoundingBox(float& l, float& t, float& r, float& b)
+void StatBar::GetBoundingBox(float& l, float& t, float& r, float& b)
 {
 }

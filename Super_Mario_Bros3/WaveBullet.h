@@ -19,7 +19,7 @@
 #define STORING_LOCATION 5000
 
 
-class CWAVE_BULLET : public CGameObject
+class WaveBullet : public CGameObject
 {
 	int dir = 0;
 	DWORD reset_start = 0;
@@ -33,7 +33,7 @@ class CWAVE_BULLET : public CGameObject
 	void CalcPotentialCollisions(vector<LPGAMEOBJECT>* coObjects, vector<LPCOLLISIONEVENT>& coEvents);
 
 public:
-	CWAVE_BULLET();
+	WaveBullet();
 	void SetisUsed(bool value) { isUsed = value; }
 	bool GetisUsed() { return isUsed; }
 	virtual void SetState(int state);

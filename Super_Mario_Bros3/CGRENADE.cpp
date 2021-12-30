@@ -1,7 +1,7 @@
 #include "CGRENADE.h"
 #include <algorithm>
 #include "PlayScene.h"
-#include "PlayerJason.h"
+#include "Jason.h"
 #include "Brick.h"
 
 CGRENADE::CGRENADE()
@@ -15,7 +15,6 @@ void CGRENADE::GetBoundingBox(float& left, float& top, float& right, float& bott
 	left = x;
 	top = y;
 	right = x + CGRENADE_BBOX_WIDTH;
-
 	if (state == CGRENADE_STATE_DIE)
 		y = y + CGRENADE_BBOX_HEIGHT;
 	else bottom = y + CGRENADE_BBOX_HEIGHT;
@@ -27,12 +26,15 @@ void CGRENADE::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	CGameObject::Update(dt, coObjects);
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
+	CPlayScene* playscene = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene());
 
 	coEvents.clear();
 
 	// turn off collision when die 
 	if (state != CGRENADE_STATE_DIE)
 		CalcPotentialCollisions(coObjects, coEvents);
+
+
 	else
 	{
 		isUsed = false;
@@ -42,7 +44,7 @@ void CGRENADE::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 	if (isUsed == false)
 	{
-		PlayerJason* JASON = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer2();
+		Jason* JASON = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer2();
 		if (JASON->GetisFiring() == true && JASON->getWeapon() == -1)
 		{
 			if (JASON->GetisAlreadyFired() == false)
@@ -119,12 +121,16 @@ void CGRENADE::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					SetState(CGRENADE_STATE_DIE);
 				}
 			}
+			if (!dynamic_cast<CBrick*>(e->obj) && !dynamic_cast<Jason*>(e->obj))
+			{
+				if (playscene->IsInside(x - 50, y - 50, x + 50, y + 50, (e->obj)->GetPositionX(), (e->obj)->GetPositionY()))
+				{
+					(e->obj)->setheath((e->obj)->Getheath() - TANK_BULLET_DMG);
+				}
+			}
 		}
 		// clean up collision events
 		for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
-		if (x <= 0)
-			if (vx < 0)
-				vx = -vx;
 	}
 }
 
@@ -135,7 +141,7 @@ void CGRENADE::CalcPotentialCollisions(
 	for (UINT i = 0; i < coObjects->size(); i++)
 	{
 		LPCOLLISIONEVENT e = SweptAABBEx(coObjects->at(i));
-		if (dynamic_cast<PlayerJason*>(e->obj))
+		if (dynamic_cast<Jason*>(e->obj))
 		{
 			continue;
 		}

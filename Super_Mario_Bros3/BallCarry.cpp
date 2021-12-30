@@ -29,6 +29,16 @@ void BallCarry::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	if (state != CBALLCARRY_STATE_DIE)
 		vy -= CBALLCARRY_GRAVITY * dt;
 
+	if (!spammed && state == STATE_DIE)
+	{
+		((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddKaboomMng(x, y);
+		int chance = rand() % 100;
+		srand(time(NULL));
+		if (chance >= 70)
+			playscene->AddItemsMng(x, y, 0);
+		spammed = true;
+	}
+
 	coEvents.clear();
 
 	// turn off collision when die 
@@ -86,6 +96,13 @@ void BallCarry::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
+			CGame* game = CGame::GetInstance();
+			if (dynamic_cast<SoPhia*>(e->obj) && !playscene->GetPlayer()->getUntouchable())
+			{
+				playscene->GetPlayer()->StartUntouchable();
+				game->setheath(game->Getheath() - 100);
+
+			}
 		}
 		// clean up collision events
 		for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
@@ -131,7 +148,7 @@ void BallCarry::Render()
 	int ani = 0;
 	if (state != STATE_DIE)
 	{
-		if(vx == 0)
+		if (vx == 0)
 			ani = CBALLCARRY_ANI_IDLE;
 		else {
 			if (vx > 0)
@@ -153,7 +170,7 @@ void BallCarry::SetState(int state)
 	switch (state)
 	{
 	case STATE_DIE:
-			vy = -DIE_PULL;
-			break;
+		vy = -DIE_PULL;
+		break;
 	}
 }

@@ -2,13 +2,14 @@
 #include <assert.h>
 #include "Utils.h"
 
-#include "PlayerJason.h"
+#include "Jason.h"
 #include "Game.h"
 
 #include "PlayScene.h"
 #include "Portal.h"
+#include "Brick.h"
 
-PlayerJason::PlayerJason(float x, float y) : CGameObject()
+Jason::Jason(float x, float y) : CGameObject()
 {
 	untouchable = 0;
 	SetState(JASON_STATE_IDLE);
@@ -18,7 +19,7 @@ PlayerJason::PlayerJason(float x, float y) : CGameObject()
 
 }
 
-void PlayerJason::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
+void Jason::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	int id = CGame::GetInstance()->GetCurrentScene()->GetId();
 	// Calculate dx, dy 
@@ -38,7 +39,7 @@ void PlayerJason::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		CalcPotentialCollisions(coObjects, coEvents);
 
 	// reset untouchable timer if untouchable time has passed
-	if (GetTickCount() - untouchable_start > JASON_UNTOUCHABLE_TIME)
+	if (GetTickCount() - untouchable_start > JASON_UNTOUCHABLE_TIME && untouchable_start != 0)
 	{
 		untouchable_start = 0;
 		untouchable = 0;
@@ -89,43 +90,46 @@ void PlayerJason::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 }
 
-void PlayerJason::Render()
+void Jason::Render()
 {
-
-	int ani = 0;
-	switch (state)
+	CGame* game = CGame::GetInstance();
+	if (!game->Getheath() == 0)
 	{
-	case JASON_STATE_WALKING_DOWN:
-		ani = JASON_ANI_WALK_DOWN;
-		pre_ani = ani;
-		break;
-	case JASON_STATE_WALKING_UP:
-		ani = JASON_ANI_WALK_UP;
-		pre_ani = ani;
-		break;
-	case JASON_STATE_WALKING_RIGHT:
-		ani = JASON_ANI_WALK_RIGHT;
-		pre_ani = ani;
-		break;
-	case JASON_STATE_WALKING_LEFT:
-		ani = JASON_ANI_WALK_LEFT;
-		pre_ani = ani;
-		break;
-	case JASON_STATE_IDLE:
-		ani = pre_ani + 4;
-		break;
+		int ani = 0;
+		switch (state)
+		{
+		case JASON_STATE_WALKING_DOWN:
+			ani = JASON_ANI_WALK_DOWN;
+			pre_ani = ani;
+			break;
+		case JASON_STATE_WALKING_UP:
+			ani = JASON_ANI_WALK_UP;
+			pre_ani = ani;
+			break;
+		case JASON_STATE_WALKING_RIGHT:
+			ani = JASON_ANI_WALK_RIGHT;
+			pre_ani = ani;
+			break;
+		case JASON_STATE_WALKING_LEFT:
+			ani = JASON_ANI_WALK_LEFT;
+			pre_ani = ani;
+			break;
+		case JASON_STATE_IDLE:
+			ani = pre_ani + 4;
+			break;
+		}
+
+		int alpha = 255;
+
+		if (untouchable) alpha = 128;
+
+		animation_set->at(ani)->Render(x, y, alpha);
+
+		////RenderBoundingBox();
 	}
-
-	int alpha = 255;
-
-	if (untouchable) alpha = 128;
-
-	animation_set->at(ani)->Render(x, y, alpha);
-
-	////RenderBoundingBox();
 }
 
-void PlayerJason::SetState(int state)
+void Jason::SetState(int state)
 {
 	CGameObject::SetState(state);
 
@@ -157,7 +161,7 @@ void PlayerJason::SetState(int state)
 	}
 }
 
-void PlayerJason::GetBoundingBox(float& left, float& top, float& right, float& bottom)
+void Jason::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
 	left = x;
 	top = y;
@@ -171,12 +175,12 @@ void PlayerJason::GetBoundingBox(float& left, float& top, float& right, float& b
 /*
 	Reset JASON status to the beginning state of a scene
 */
-void PlayerJason::Reset()
+void Jason::Reset()
 {
 	SetState(JASON_STATE_IDLE);
 }
 
-void PlayerJason::CalcPotentialCollisions(
+void Jason::CalcPotentialCollisions(
 	vector<LPGAMEOBJECT>* coObjects,
 	vector<LPCOLLISIONEVENT>& coEvents)
 {
@@ -189,7 +193,7 @@ void PlayerJason::CalcPotentialCollisions(
 	{
 		LPCOLLISIONEVENT e = SweptAABBEx(coObjects->at(i));
 
-		if (dynamic_cast<CTANKBULLET*>(e->obj) || dynamic_cast<CredWorm*>(e->obj))
+		if (dynamic_cast<TankBullet*>(e->obj) || dynamic_cast<CredWorm*>(e->obj))
 		{
 			continue;
 		}
@@ -214,9 +218,33 @@ void PlayerJason::CalcPotentialCollisions(
 				continue;
 			}
 			else
-			{
-				collisionEvents.push_back(e);
-			}
+				if (dynamic_cast<Items*>(e->obj))
+				{
+					Items* item = dynamic_cast<Items*>(e->obj);
+					if (item->getType() == 0)
+					{
+						game->setheath(game->Getheath() + 100);
+					}
+					else
+					{
+						game->setattack(game->Getattack() + 100);
+					}
+					item->SetState(STATE_DIE);
+					continue;
+				}
+				else
+				{
+					if (dynamic_cast<CBrick*>(e->obj))
+						collisionEvents.push_back(e);
+					/*else
+					{
+						if (!untouchable)
+						{
+							game->setheath(game->Getheath() - 100);
+							StartUntouchable();
+						}
+					}*/
+				}
 		}
 		else
 			delete e;
@@ -235,4 +263,3 @@ void PlayerJason::CalcPotentialCollisions(
 			delete e;
 	}
 }
-

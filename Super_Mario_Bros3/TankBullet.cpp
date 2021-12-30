@@ -1,16 +1,16 @@
-#include "CTANKBULLET.h"
+#include "TankBullet.h"
 #include <algorithm>
 #include "PlayScene.h"
-#include "PlayerSophia.h"
+#include "SoPhia.h"
 #include "Brick.h"
 
-CTANKBULLET::CTANKBULLET()
+TankBullet::TankBullet()
 {
 	SetState(CTANKBULLET_STATE_FLYING);
 	nx = 0;
 }
 
-void CTANKBULLET::GetBoundingBox(float& left, float& top, float& right, float& bottom)
+void TankBullet::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
 	if (state != CTANKBULLET_STATE_DIE) {
 		left = x;
@@ -20,7 +20,7 @@ void CTANKBULLET::GetBoundingBox(float& left, float& top, float& right, float& b
 	}
 }
 
-void CTANKBULLET::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
+void TankBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	if ((DWORD)GetTickCount64() - reset_start > CTANKBULLET_RESET_TIME)
 	{
@@ -45,7 +45,7 @@ void CTANKBULLET::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 	if (isUsed == false)
 	{
-		PlayerSophia* SOPHIA = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+		SoPhia* SOPHIA = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 		if (SOPHIA->GetisFiring() == true)
 		{
 			if (SOPHIA->GetisAlreadyFired() == false)
@@ -93,8 +93,8 @@ void CTANKBULLET::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			LPCOLLISIONEVENT e = coEventsResult[i];
 			if (!dynamic_cast<CBrick*>(e->obj)) 
 			{
-				(e->obj)->SetState(STATE_DIE);
-				((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddKaboomMng(e->obj->x, e->obj->y);
+				(e->obj)->setheath((e->obj)->Getheath() - TANK_BULLET_DMG);
+				//((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddKaboomMng(e->obj->x, e->obj->y);
 				SetState(CTANKBULLET_STATE_DIE);
 			}
 			else 
@@ -109,16 +109,24 @@ void CTANKBULLET::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 }
 
-void CTANKBULLET::CalcPotentialCollisions(
+void TankBullet::CalcPotentialCollisions(
 	vector<LPGAMEOBJECT>* coObjects,
 	vector<LPCOLLISIONEVENT>& coEvents)
 {
 	for (UINT i = 0; i < coObjects->size(); i++)
 	{
 		LPCOLLISIONEVENT e = SweptAABBEx(coObjects->at(i));
-		if (dynamic_cast<PlayerSophia*>(e->obj))
+		if (dynamic_cast<SoPhia*>(e->obj))
 		{
-				continue;
+			continue;
+		}
+		if (dynamic_cast<CBOOM*>(e->obj))
+		{
+			continue;
+		}
+		if (dynamic_cast<Items*>(e->obj))
+		{
+			continue;
 		}
 		if (e->t > 0 && e->t <= 1.0f)
 			coEvents.push_back(e);
@@ -128,7 +136,7 @@ void CTANKBULLET::CalcPotentialCollisions(
 	std::sort(coEvents.begin(), coEvents.end(), CCollisionEvent::compare);
 }
 
-void CTANKBULLET::Render()
+void TankBullet::Render()
 {
 	if (isUsed)
 	{
@@ -158,7 +166,7 @@ void CTANKBULLET::Render()
 	}
 }
 
-void CTANKBULLET::SetState(int state)
+void TankBullet::SetState(int state)
 {
 	CGameObject::SetState(state);
 	switch (state)

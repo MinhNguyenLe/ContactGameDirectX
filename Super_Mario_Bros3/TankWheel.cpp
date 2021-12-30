@@ -1,47 +1,47 @@
-#include "PlayerTankWheel.h"
+#include "TankWheel.h"
 #include <algorithm>
 #include "PlayScene.h"
 
 
-PlayerTankWheel::PlayerTankWheel(int part)
+TankWheel::TankWheel(int part)
 {
 	this->part = part;
 }
 
-void PlayerTankWheel::GetBoundingBox(float& left, float& top, float& right, float& bottom)
+void TankWheel::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
 }
 
-void PlayerTankWheel::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
+void TankWheel::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	
+
 	CGameObject::Update(dt, coObjects);
 
-	PlayerSophia* SOPHIA = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	SoPhia* SOPHIA = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 
-	switch(part)
+	switch (part)
 	{
 	case TANKWHEEL_LEFT_WHEEL:
-			x = SOPHIA->x + TANKWHEEL_WHEEL_DISTANT_X_1;
-			if (SOPHIA->GetisAimingUp())
+		x = SOPHIA->x + TANKWHEEL_WHEEL_DISTANT_X_1;
+		if (SOPHIA->GetisAimingUp())
+		{
+			if (nx > 0)
 			{
-				if (nx > 0)
-				{
-					x = x + 4;
-				}
+				x = x + 4;
 			}
-			break;
+		}
+		break;
 	case TANKWHEEL_RIGHT_WHEEL:
-			x = SOPHIA->x + TANKWHEEL_WHEEL_DISTANT_X_2;
-			if (SOPHIA->GetisAimingUp())
+		x = SOPHIA->x + TANKWHEEL_WHEEL_DISTANT_X_2;
+		if (SOPHIA->GetisAimingUp())
+		{
+			if (nx > 0)
 			{
-				if (nx > 0)
-				{
-					x = x - 2;
-				}
+				x = x - 2;
 			}
-			break;
-			break;
+		}
+		break;
+		break;
 	}
 
 	y = SOPHIA->y + TANKWHEEL_WHEEL_DISTANT_Y;
@@ -53,16 +53,16 @@ void PlayerTankWheel::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		y = y + 6;
 	}
-	
-		x += dx;
-		y += dy;
+
+	x += dx;
+	y += dy;
 
 }
 
 
-void PlayerTankWheel::Render()
+void TankWheel::Render()
 {
-	PlayerSophia* SOPHIA = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	SoPhia* SOPHIA = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 
 	int ani = 0;
 
@@ -92,20 +92,22 @@ void PlayerTankWheel::Render()
 		}
 	}
 
-	else if(SOPHIA->vx == 0)
+	else if (SOPHIA->vx == 0)
 	{
 		if (part != TANKWHEEL_TURRET)
 			ani = WHEELING_ANI_IDLE;
 		else
 			ani = pre_ani;
 	}
+	int alpha = 255;
+	if (SOPHIA->getUntouchable()) alpha = 128;
 
-	animation_set->at(ani)->Render(x, y);
+	animation_set->at(ani)->Render(x, y, alpha);
 
 	//RenderBoundingBox();
 }
 
-void PlayerTankWheel::SetState(int state)
+void TankWheel::SetState(int state)
 {
 	CGameObject::SetState(state);
 	//switch (state)

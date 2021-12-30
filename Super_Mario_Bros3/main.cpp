@@ -20,7 +20,7 @@
 #include "GameObject.h"
 #include "Textures.h"
 
-#include "PlayerSophia.h"
+#include "SoPhia.h"
 #include "Brick.h"
 #include "Eye.h"
 

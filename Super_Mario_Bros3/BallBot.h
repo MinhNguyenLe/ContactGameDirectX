@@ -23,7 +23,7 @@
 
 #define CBALLBOT_X_RANGE 20
 
-class BallBot: public CGameObject
+class BallBot : public CGameObject
 {
 	bool triggered = false;
 	int pre_ani;

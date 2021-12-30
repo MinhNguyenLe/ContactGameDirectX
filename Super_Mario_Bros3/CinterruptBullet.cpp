@@ -1,15 +1,15 @@
-#include "CINTERRUPT_BULLET.h"
+#include "CinterruptBullet.h"
 #include <algorithm>
 #include "PlayScene.h"
 #include "Brick.h"
 
-CINTERRUPT_BULLET::CINTERRUPT_BULLET()
+CinterruptBullet::CinterruptBullet()
 {
 	SetState(CINTERRUPT_BULLET_STATE_IDLE);
 	nx = 0;
 }
 
-void CINTERRUPT_BULLET::GetBoundingBox(float& left, float& top, float& right, float& bottom)
+void CinterruptBullet::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
 	left = x;
 	top = y;
@@ -20,7 +20,7 @@ void CINTERRUPT_BULLET::GetBoundingBox(float& left, float& top, float& right, fl
 	else bottom = y + CINTERRUPT_BULLET_BBOX_HEIGHT;
 }
 
-void CINTERRUPT_BULLET::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
+void CinterruptBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	CPlayScene* playscene = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene());
 	CGameObject::Update(dt, coObjects);
@@ -82,7 +82,7 @@ void CINTERRUPT_BULLET::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 }
 
-void CINTERRUPT_BULLET::CalcPotentialCollisions(
+void CinterruptBullet::CalcPotentialCollisions(
 	vector<LPGAMEOBJECT>* coObjects,
 	vector<LPCOLLISIONEVENT>& coEvents)
 {
@@ -101,7 +101,7 @@ void CINTERRUPT_BULLET::CalcPotentialCollisions(
 	std::sort(coEvents.begin(), coEvents.end(), CCollisionEvent::compare);
 }
 
-void CINTERRUPT_BULLET::Render()
+void CinterruptBullet::Render()
 {
 	int ani = 0;
 
@@ -119,7 +119,7 @@ void CINTERRUPT_BULLET::Render()
 	//RenderBoundingBox();
 }
 
-void CINTERRUPT_BULLET::SetState(int state)
+void CinterruptBullet::SetState(int state)
 {
 	CGameObject::SetState(state);
 	switch (state)

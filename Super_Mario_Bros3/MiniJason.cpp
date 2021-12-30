@@ -2,52 +2,59 @@
 #include <assert.h>
 #include "Utils.h"
 
-#include "PlayerSophia.h"
+#include "MiniJason.h"
 #include "Game.h"
 
 #include "PlayScene.h"
 #include "Portal.h"
 
-PlayerSophia::PlayerSophia(float x, float y) : CGameObject()
+MiniJason::MiniJason(float x, float y) : CGameObject()
 {
 	untouchable = 0;
-	SetState(SOPHIA_STATE_IDLE);
-
+	SetState(MINI_JASON_STATE_IDLE);
 	start_x = x;
 	start_y = y;
 	this->x = x;
 	this->y = y;
-	
+
 }
 
-void PlayerSophia::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
+void MiniJason::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	int id = CGame::GetInstance()->GetCurrentScene()->GetId();
 	CGame* game = CGame::GetInstance();
 	// Calculate dx, dy 
 	CGameObject::Update(dt);
+	CPlayScene* playscene = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene());
 
 	// Simple fall down
-	//if(!game->GetFilming())
-	vy -= SOPHIA_GRAVITY * dt;
+	if(!playscene->getpiloting())
+	vy -= MINI_JASON_GRAVITY * dt;
 
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 
 	coEvents.clear();
 
+	
+	if (playscene->getpiloting())
+	{
+		y = playscene->GetPlayer()->GetPositionY();
+		x = playscene->GetPlayer()->GetPositionX() + 5;
+	}
+
 	// turn off collision when die 
-	if (state != SOPHIA_STATE_DIE)
+	if (state != MINI_JASON_STATE_DIE)
 		CalcPotentialCollisions(coObjects, coEvents);
 
 	// reset untouchable timer if untouchable time has passed
-	if (GetTickCount() - untouchable_start > SOPHIA_UNTOUCHABLE_TIME)
+	if (GetTickCount() - untouchable_start > MINI_JASON_UNTOUCHABLE_TIME)
 	{
 		untouchable_start = 0;
 		untouchable = 0;
 	}
 
-	if (isAlreadyFired && (DWORD)GetTickCount64() - firing_start > SOPHIA_FIRING_DELAY_TIME)
+	if (isAlreadyFired && (DWORD)GetTickCount64() - firing_start > MINI_JASON_FIRING_DELAY_TIME)
 	{
 		SetisAlreadyFired(false);
 		SetisIsFiring(0);
@@ -68,7 +75,7 @@ void PlayerSophia::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		// TODO: This is a very ugly designed function!!!!
 		FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
 
-		// how to push back SOPHIA if collides with a moving objects, what if SOPHIA is pushed this way into another object?
+		// how to push back MINI_JASON if collides with a moving objects, what if MINI_JASON is pushed this way into another object?
 		//if (rdx != 0 && rdx!=dx)
 		//	x += nx*abs(rdx); 
 
@@ -96,81 +103,92 @@ void PlayerSophia::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 }
 
-void PlayerSophia::Render()
+void MiniJason::Render()
 {
-	//
-	//int ani = -1;
-	//if (state == SOPHIA_STATE_DIE)
-	//	ani = SOPHIA_ANI_DIE;
-	//else
-	//{
-	//	if (vx == 0)
-	//	{
-	//		if (nx > 0) ani = SOPHIA_ANI_BIG_IDLE_RIGHT;
-	//		else ani = SOPHIA_ANI_BIG_IDLE_LEFT;
-	//	}
-	//	else if (vx > 0)
-	//		ani = SOPHIA_ANI_BIG_WALKING_RIGHT;
-	//	else ani = SOPHIA_ANI_BIG_WALKING_LEFT;
+	CPlayScene* playscene = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene());
+	if (!playscene->getpiloting())
+	{
+		int ani = -1;
+		if (state == MINI_JASON_STATE_DIE)
+			return;
 
-	//}
-	//int alpha = 255;
-	//if (untouchable) alpha = 128;
+		if (state != MINI_JASON_STATE_IDLE)
+		{
+			if (state == MINI_JASON_STATE_WALKING_RIGHT)
+			{
+				ani = MINI_JASON_ANI_WALKING_RIGHT;
+				pre_ani = ani;
+			}
+			if (state == MINI_JASON_STATE_WALKING_LEFT) {
+				ani = MINI_JASON_ANI_WALKING_LEFT;
+				pre_ani = ani;
+			}
+		}
+		else
+			ani = pre_ani + 2;
+		if (isJumping)
+			ani = pre_ani + 4;
 
-	//animation_set->at(ani)->Render(x, y, alpha);
+		int alpha = 255;
 
-	////RenderBoundingBox();
+		if (untouchable) alpha = 128;
+
+		animation_set->at(ani)->Render(x, y, alpha);
+	}
 }
 
-void PlayerSophia::SetState(int state)
+void MiniJason::SetState(int state)
 {
 	CGameObject::SetState(state);
 
 	switch (state)
 	{
-	case SOPHIA_STATE_WALKING_RIGHT:
-		vx = SOPHIA_WALKING_SPEED;
+	case MINI_JASON_STATE_WALKING_RIGHT:
+		vx = MINI_JASON_WALKING_SPEED;
 		nx = 1;
 		dir = 1;
 		break;
-	case SOPHIA_STATE_WALKING_LEFT:
-		vx = -SOPHIA_WALKING_SPEED;
+	case MINI_JASON_STATE_WALKING_LEFT:
+		vx = -MINI_JASON_WALKING_SPEED;
 		nx = -1;
 		dir = -1;
 		break;
-	case SOPHIA_STATE_JUMP:
-		// TODO: need to check if SOPHIA is *current* on a platform before allowing to jump again
-		vy = SOPHIA_JUMP_SPEED_Y;
+	case MINI_JASON_STATE_JUMP:
+		// TODO: need to check if MINI_JASON is *current* on a platform before allowing to jump again
+		vy = MINI_JASON_JUMP_SPEED_Y;
 		break;
-	case SOPHIA_STATE_IDLE:
+	case MINI_JASON_STATE_IDLE:
 		vx = 0;
 		break;
-	case SOPHIA_STATE_DIE:
-		vy = -SOPHIA_DIE_DEFLECT_SPEED;
+	case MINI_JASON_STATE_DIE:
+		vy = -MINI_JASON_DIE_DEFLECT_SPEED;
 		break;
 	}
 }
 
-void PlayerSophia::GetBoundingBox(float& left, float& top, float& right, float& bottom)
+void MiniJason::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
-	left = x;
-	top = y;
+	CPlayScene* playscene = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene());
+	if (!playscene->getpiloting())
+	{
+		left = x;
+		top = y;
+		right = x + MINI_JASON_BBOX_WIDTH;
+		bottom = y + MINI_JASON_BBOX_HEIGHT;
 
-	right = x + SOPHIA_BIG_BBOX_WIDTH;
-	bottom = y + SOPHIA_BIG_BBOX_HEIGHT;
-
-	//DebugOut(L"L T R B %f %f %f %f  \n", left, top, right, bottom);
+		//DebugOut(L"L T R B %f %f %f %f  \n", left, top, right, bottom);
+	}
 }
 
 /*
-	Reset SOPHIA status to the beginning state of a scene
+	Reset MINI_JASON status to the beginning state of a scene
 */
-void PlayerSophia::Reset()
+void MiniJason::Reset()
 {
-	SetState(SOPHIA_STATE_IDLE);
+	SetState(MINI_JASON_STATE_IDLE);
 }
 
-void PlayerSophia::CalcPotentialCollisions(
+void MiniJason::CalcPotentialCollisions(
 	vector<LPGAMEOBJECT>* coObjects,
 	vector<LPCOLLISIONEVENT>& coEvents)
 {
@@ -183,7 +201,11 @@ void PlayerSophia::CalcPotentialCollisions(
 	{
 		LPCOLLISIONEVENT e = SweptAABBEx(coObjects->at(i));
 
-		if (dynamic_cast<CTANKBULLET*>(e->obj) || dynamic_cast<CredWorm*>(e->obj))
+		if (dynamic_cast<TankBullet*>(e->obj) || dynamic_cast<CredWorm*>(e->obj))
+		{
+			continue;
+		}
+		if (dynamic_cast<SoPhia*>(e->obj))
 		{
 			continue;
 		}
@@ -201,11 +223,12 @@ void PlayerSophia::CalcPotentialCollisions(
 			if (dynamic_cast<CPortal*>(e->obj))
 			{
 				CPortal* portal = dynamic_cast<CPortal*>(e->obj);
-				if (portal->GetSceneId() != -1)
-					game->SwitchScene(portal->GetSceneId());
 				playscene->StartFilming();
 				game->setFilming(true);
-				playscene->setCamState(portal->GetCamState());
+				if(portal->GetCamState() != -1)
+					playscene->setCamState(portal->GetCamState());
+				if (portal->GetSceneId() != -1)
+					game->SwitchScene(portal->GetSceneId());
 				continue;
 			}
 			else

@@ -230,9 +230,9 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 			DebugOut(L"[ERROR] SOPHIA object was created before!\n");
 			return;
 		}
-		obj = new PlayerSophia(x, getMapheight() - y);
+		obj = new SoPhia(x, getMapheight() - y);
 
-		player = (PlayerSophia*)obj;
+		player = (SoPhia*)obj;
 
 		DebugOut(L"[INFO] Player object created!\n");
 
@@ -243,22 +243,40 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 			DebugOut(L"[ERROR] JASON object was created before!\n");
 			return;
 		}
-		obj = new PlayerJason(x, getMapheight() - y);
+		obj = new Jason(x, getMapheight() - y);
 
-		player2 = (PlayerJason*)obj;
+		player2 = (Jason*)obj;
+
+		DebugOut(L"[INFO] Player object created!\n");
+
+		break;
+	case OBJECT_TYPE_MINI_JASON:
+		if (player3 != NULL)
+		{
+			DebugOut(L"[ERROR] MINI_JASON object was created before!\n");
+			return;
+		}
+		obj = new MiniJason(x, getMapheight() - y);
+
+		player3 = (MiniJason*)obj;
 
 		DebugOut(L"[INFO] Player object created!\n");
 
 		break;
 	case OBJECT_TYPE_BRICK: obj = new CBrick(); break;
 	case OBJECT_TYPE_CBOOM: obj = new CBOOM(); break;
-	case OBJECT_TYPE_CTANKBULLET: obj = new CTANKBULLET(); break;
+	case OBJECT_TYPE_CTANKBULLET: obj = new TankBullet(); break;
 	case OBJECT_TYPE_NoCollisionObject: obj = new CNoCollisionObject(); break;
-	case OBJECT_TYPE_STATBAR: obj = new CSTATBAR(atoi(tokens[4].c_str())); break;
+	case OBJECT_TYPE_STATBAR: obj = new StatBar(atoi(tokens[4].c_str())); break;
+	case OBJECT_TYPE_ITEMS:
+	{
+		obj = new Items(0);
+	}
+	break;
 	case OBJECT_TYPE_TANK_WHEEL:
 	{
 		float part = atof(tokens[4].c_str());
-		obj = new PlayerTankWheel(part);
+		obj = new TankWheel(part);
 	}
 	break;
 	case OBJECT_TYPE_CLASER_BULLET:
@@ -268,21 +286,25 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	break;
 	case OBJECT_TYPE_TANK_BODY:
 	{
-		obj = new PlayerTankBody();
+		obj = new TankBody();
 	}
 	break;
 	case OBJECT_TYPE_JASON_BULLET_1:
 	{
-		obj = new CWAVE_BULLET();
+		obj = new WaveBullet();
 	}
 	break;
 
 	case OBJECT_TYPE_TANK_TURRET:
 	{
-		obj = new PlayerTankturret();
+		obj = new TankTurret();
 	}
 	break;
-
+	case OBJECT_TYPE_TANKDOOR:
+	{
+		obj = new TankDoor();
+	}
+	break;
 	case OBJECT_TYPE_EFFECT:
 	{
 		float time = atof(tokens[4].c_str());
@@ -308,7 +330,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		obj = new CPortal(x, y, r, b, scene_id, camState);
 	}
 	break;
-	case OBJECT_TYPE_CINTERCRUPT_BULLET: obj = new CINTERRUPT_BULLET(); break;
+	case OBJECT_TYPE_CINTERCRUPT_BULLET: obj = new CinterruptBullet(); break;
 	case OBJECT_TYPE_RED_WORM: obj = new CredWorm(); break;
 		
 	break;
@@ -413,15 +435,25 @@ void CPlayScene::Update(DWORD dt)
 	// TO-DO: This is a "dirty" way, need a more organized way 
 
 	// skip the rest if scene was already unloaded (SOPHIA::Update might trigger PlayScene::Unload)
-	if (player == NULL && player2 == NULL) return;
+	if (player == NULL && player2 == NULL && player3 == NULL) return;
 
 	// Update camera to follow mario
 	float cx, cy;
 
-	if(player)
-		player->GetPosition(cx, cy);
-	else
+	if (player != NULL || player3 != NULL)
+	{
+		if (piloting)
+		{
+			player->GetPosition(cx, cy);
+		}
+		else
+		{
+			player3->GetPosition(cx, cy);
+		}
+	}
+	else if(player2)
 		player2->GetPosition(cx, cy);
+
 
 	cy = cy;
 
@@ -522,6 +554,8 @@ void CPlayScene::Unload()
 
 	player2 = NULL;
 
+	player3 = NULL;
+
 	delete map;
 
 	setCamState(0);
@@ -534,6 +568,10 @@ void CPlayScene::Unload()
 
 	delete quadtree;
 
+	CGame* game = CGame::GetInstance();
+
+	game->setFilming(false);
+
 	DebugOut(L"[INFO] Scene %s unloaded! \n", sceneFilePath);
 }
 
@@ -542,40 +580,65 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	//DebugOut(L"[INFO] KeyDown: %d\n", KeyCode);
 	CPlayScene* playscene = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene());
 
-	if (((CPlayScene*)scence)->GetPlayer())
+	if (playscene->GetPlayer() != NULL || playscene->GetPlayer3() != NULL)
 	{
-		PlayerSophia* player = ((CPlayScene*)scence)->GetPlayer();
-		switch (KeyCode)
+		if (playscene->getpiloting())
 		{
-		case DIK_SPACE:
-			if (!player->GetIsJumping())
+			SoPhia* player = playscene->GetPlayer();
+			switch (KeyCode)
 			{
-				player->SetState(SOPHIA_STATE_JUMP);
-				player->SetIsJumping(true);
+			case DIK_SPACE:
+				if (!player->GetIsJumping())
+				{
+					player->SetState(SOPHIA_STATE_JUMP);
+					player->SetIsJumping(true);
+				}
+				break;
+			case DIK_B:
+				player->Reset();
+				break;
+			case DIK_A:
+				player->SetisFiring(true);
+				break;
+			case DIK_C:
+				playscene->setCamState(playscene->getCamState() + 1);
+				break;
+			case DIK_UP:
+				player->SetisAimingUp(true);
+				break;
 			}
-			break;
-		case DIK_B:
-			player->Reset();
-			break;
-		case DIK_A:
-			player->SetisFiring(true);
-			break;
-		case DIK_C:
-			playscene->setCamState(playscene->getCamState() + 1);
-			break;
-		case DIK_UP:
-			player->SetisAimingUp(true);
-			break;
+		}
+		else
+		{
+			MiniJason* player = playscene->GetPlayer3();
+			switch (KeyCode)
+			{
+			case DIK_SPACE:
+				if (!player->GetIsJumping())
+				{
+					player->SetState(SOPHIA_STATE_JUMP);
+					player->SetIsJumping(true);
+				}
+				break;
+			case DIK_B:
+				player->Reset();
+				break;
+			case DIK_A:
+				player->SetisFiring(true);
+				break;
+			case DIK_C:
+				playscene->setCamState(playscene->getCamState() + 1);
+				break;
+			case DIK_UP:
+				player->SetisAimingUp(true);
+				break;
+			}
 		}
 	}
-
 	else {
-		PlayerJason* player = ((CPlayScene*)scence)->GetPlayer2();
+		Jason* player = playscene->GetPlayer2();
 		switch (KeyCode)
 		{
-		case DIK_SPACE:
-			player->SetState(SOPHIA_STATE_JUMP);
-			break;
 		case DIK_B:
 			player->Reset();
 			break;
@@ -589,31 +652,66 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 {
 	CGame* game = CGame::GetInstance();
-	if (((CPlayScene*)scence)->GetPlayer())
+	CPlayScene* playscene = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene());
+	if (KeyCode == DIK_Z && playscene->GetPlayer3())
 	{
-		PlayerSophia* player = ((CPlayScene*)scence)->GetPlayer();
-		switch (KeyCode)
+		playscene->setpiloting(!playscene->getpiloting());
+		MiniJason* player = playscene->GetPlayer3();
+		//if (!playscene->getpiloting())
 		{
-		case DIK_A:
-			player->SetisFiring(false);
-			break;
-		case DIK_R:
-			CGame::GetInstance()->SwitchScene(2);
-			break;
-		case DIK_H:
-			CGame::GetInstance()->SwitchScene(1);
-			break;
-		case DIK_UP:
-			player->SetisAimingUp(false);
-			break;
-		case DIK_V:
-			game->setheath(game->Getheath() - 100);
-			break;
+			player->SetState(SOPHIA_STATE_JUMP);
+			player->SetIsJumping(true);
 		}
 	}
-		
+	if (playscene->GetPlayer() != NULL || playscene->GetPlayer3() != NULL)
+	{
+		if (playscene->getpiloting())
+		{
+			SoPhia* player = playscene->GetPlayer();
+			switch (KeyCode)
+			{
+			case DIK_A:
+				player->SetisFiring(false);
+				break;
+			case DIK_R:
+				CGame::GetInstance()->SwitchScene(2);
+				break;
+			case DIK_H:
+				CGame::GetInstance()->SwitchScene(1);
+				break;
+			case DIK_UP:
+				player->SetisAimingUp(false);
+				break;
+			case DIK_V:
+				game->setheath(game->Getheath() - 100);
+				break;
+			}
+		}
+		else
+		{
+			MiniJason* player = playscene->GetPlayer3();
+			switch (KeyCode)
+			{
+			case DIK_A:
+				player->SetisFiring(false);
+				break;
+			case DIK_R:
+				CGame::GetInstance()->SwitchScene(2);
+				break;
+			case DIK_H:
+				CGame::GetInstance()->SwitchScene(1);
+				break;
+			case DIK_UP:
+				player->SetisAimingUp(false);
+				break;
+			case DIK_V:
+				game->setheath(game->Getheath() - 100);
+				break;
+			}
+		}
+	}
 	else {
-		PlayerJason* player = ((CPlayScene*)scence)->GetPlayer2();
+		Jason* player = playscene->GetPlayer2();
 		switch (KeyCode)
 		{
 		case DIK_A:
@@ -633,23 +731,34 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 void CPlayScenceKeyHandler::KeyState(BYTE* states)
 {
 	CGame* game = CGame::GetInstance();
-
-	if (((CPlayScene*)scence)->GetPlayer())
+	CPlayScene* playscene = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene());
+	if (playscene->GetPlayer() != NULL || playscene->GetPlayer3() != NULL)
 	{
-		PlayerSophia* player = ((CPlayScene*)scence)->GetPlayer();
-		// disable control key when SOPHIA die 
-		if (player->GetState() == SOPHIA_STATE_DIE) return;
-		if (game->IsKeyDown(DIK_RIGHT))
-			player->SetState(SOPHIA_STATE_WALKING_RIGHT);
-		else if (game->IsKeyDown(DIK_LEFT))
-			player->SetState(SOPHIA_STATE_WALKING_LEFT);
+		if (playscene->getpiloting())
+		{
+			SoPhia* player = playscene->GetPlayer();
+			if (player->GetState() == SOPHIA_STATE_DIE) return;
+			if (game->IsKeyDown(DIK_RIGHT))
+				player->SetState(SOPHIA_STATE_WALKING_RIGHT);
+			else if (game->IsKeyDown(DIK_LEFT))
+				player->SetState(SOPHIA_STATE_WALKING_LEFT);
+			else
+				player->SetState(SOPHIA_STATE_IDLE);
+		}
 		else
-			player->SetState(SOPHIA_STATE_IDLE);
+		{
+			MiniJason* player = playscene->GetPlayer3();
+			if (player->GetState() == SOPHIA_STATE_DIE) return;
+			if (game->IsKeyDown(DIK_RIGHT))
+				player->SetState(SOPHIA_STATE_WALKING_RIGHT);
+			else if (game->IsKeyDown(DIK_LEFT))
+				player->SetState(SOPHIA_STATE_WALKING_LEFT);
+			else
+				player->SetState(SOPHIA_STATE_IDLE);
+		}
 	}
-
 	else {
-		PlayerJason* player = ((CPlayScene*)scence)->GetPlayer2();
-		// disable control key when SOPHIA die 
+		Jason* player = playscene->GetPlayer2();
 		if (player->GetState() == SOPHIA_STATE_DIE) return;
 		if (game->IsKeyDown(DIK_RIGHT))
 			player->SetState(SOPHIA_STATE_WALKING_RIGHT);

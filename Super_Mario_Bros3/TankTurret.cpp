@@ -1,23 +1,23 @@
-#include "PlayerTankturret.h"
+#include "TankTurret.h"
 #include <algorithm>
 #include "PlayScene.h"
 #include "DF.h"
 
 
-PlayerTankturret::PlayerTankturret()
+TankTurret::TankTurret()
 {
 }
 
-void PlayerTankturret::GetBoundingBox(float& left, float& top, float& right, float& bottom)
+void TankTurret::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
 }
 
-void PlayerTankturret::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
+void TankTurret::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 
 	CGameObject::Update(dt, coObjects);
 
-	PlayerSophia* SOPHIA = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	SoPhia* SOPHIA = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 
 	x = SOPHIA->x + TURRET_DISTANT_X;
 
@@ -37,9 +37,9 @@ void PlayerTankturret::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 }
 
 
-void PlayerTankturret::Render()
+void TankTurret::Render()
 {
-	PlayerSophia* SOPHIA = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	SoPhia* SOPHIA = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 
 	int ani = pre_ani;
 
@@ -57,12 +57,15 @@ void PlayerTankturret::Render()
 	if (SOPHIA->GetisAimingUp())
 		ani = ani + 2;
 
-	animation_set->at(ani)->Render(x, y);
+	int alpha = 255;
+	if (SOPHIA->getUntouchable()) alpha = 128;
+
+	animation_set->at(ani)->Render(x, y, alpha);
 
 	//RenderBoundingBox();
 }
 
-void PlayerTankturret::SetState(int state)
+void TankTurret::SetState(int state)
 {
 	CGameObject::SetState(state);
 	//switch (state)

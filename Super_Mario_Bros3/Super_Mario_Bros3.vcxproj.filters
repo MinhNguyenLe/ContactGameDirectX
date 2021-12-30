@@ -108,7 +108,7 @@
     <ClInclude Include="CLaserGuard.h">
       <Filter>Header Files\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="Stuka.h">
+    <ClInclude Include="CStuka.h">
       <Filter>Header Files\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="Eyelet.h">
@@ -120,28 +120,28 @@
     <ClInclude Include="MapObj.h">
       <Filter>Header Files\System</Filter>
     </ClInclude>
-    <ClInclude Include="CTANKBULLET.h">
+    <ClInclude Include="TankBullet.h">
       <Filter>Header Files\OtherObj</Filter>
     </ClInclude>
-    <ClInclude Include="CINTERRUPT_BULLET.h">
+    <ClInclude Include="CinterruptBullet.h">
       <Filter>Header Files\OtherObj</Filter>
     </ClInclude>
     <ClInclude Include="CredWorm.h">
       <Filter>Header Files\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerTankWheel.h">
+    <ClInclude Include="TankWheel.h">
       <Filter>Header Files\Player</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerSophia.h">
+    <ClInclude Include="SoPhia.h">
       <Filter>Header Files\Player</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerTankBody.h">
+    <ClInclude Include="TankBody.h">
       <Filter>Header Files\Player</Filter>
     </ClInclude>
     <ClInclude Include="DF.h">
       <Filter>Header Files\OtherObj</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerTankturret.h">
+    <ClInclude Include="TankTurret.h">
       <Filter>Header Files\Player</Filter>
     </ClInclude>
     <ClInclude Include="CEvenType1.h">
@@ -153,13 +153,13 @@
     <ClInclude Include="CBOOM.h">
       <Filter>Header Files\OtherObj</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerJason.h">
+    <ClInclude Include="Jason.h">
       <Filter>Header Files\Player</Filter>
     </ClInclude>
     <ClInclude Include="NoCollisionObject.h">
       <Filter>Header Files\OtherObj</Filter>
     </ClInclude>
-    <ClInclude Include="CWAVE_BULLET.h">
+    <ClInclude Include="WaveBullet.h">
       <Filter>Header Files\OtherObj</Filter>
     </ClInclude>
     <ClInclude Include="CGRENADE.h">
@@ -168,16 +168,28 @@
     <ClInclude Include="CGX_BULLET.h">
       <Filter>Header Files\OtherObj</Filter>
     </ClInclude>
-    <ClInclude Include="ClaserBullet.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="sound.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\System</Filter>
     </ClInclude>
     <ClInclude Include="MapCamera.h">
+      <Filter>Header Files\System</Filter>
+    </ClInclude>
+    <ClInclude Include="ClaserBullet.h">
+      <Filter>Header Files\OtherObj</Filter>
+    </ClInclude>
+    <ClInclude Include="StatBar.h">
+      <Filter>Header Files\OtherObj</Filter>
+    </ClInclude>
+    <ClInclude Include="MiniJason.h">
+      <Filter>Header Files\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="TankDoor.h">
+      <Filter>Header Files\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="CBREAKABLE_BRICK.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CSTATBAR.h">
+    <ClInclude Include="Items.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -245,7 +257,7 @@
     <ClCompile Include="CLaserGuard.cpp">
       <Filter>Source Files\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="Stuka.cpp">
+    <ClCompile Include="CStuka.cpp">
       <Filter>Source Files\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="Eyelet.cpp">
@@ -260,25 +272,25 @@
     <ClCompile Include="MapObj.cpp">
       <Filter>Source Files\System</Filter>
     </ClCompile>
-    <ClCompile Include="CTANKBULLET.cpp">
+    <ClCompile Include="TankBullet.cpp">
       <Filter>Source Files\OtherObj</Filter>
     </ClCompile>
-    <ClCompile Include="CINTERRUPT_BULLET.cpp">
+    <ClCompile Include="CinterruptBullet.cpp">
       <Filter>Source Files\OtherObj</Filter>
     </ClCompile>
     <ClCompile Include="CredWorm.cpp">
       <Filter>Source Files\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerTankWheel.cpp">
+    <ClCompile Include="TankWheel.cpp">
       <Filter>Source Files\Player</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerSophia.cpp">
+    <ClCompile Include="SoPhia.cpp">
       <Filter>Source Files\Player</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerTankBody.cpp">
+    <ClCompile Include="TankBody.cpp">
       <Filter>Source Files\Player</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerTankturret.cpp">
+    <ClCompile Include="TankTurret.cpp">
       <Filter>Source Files\Player</Filter>
     </ClCompile>
     <ClCompile Include="EFFECT.cpp">
@@ -287,7 +299,7 @@
     <ClCompile Include="CBOOM.cpp">
       <Filter>Source Files\OtherObj</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerJason.cpp">
+    <ClCompile Include="Jason.cpp">
       <Filter>Source Files\Player</Filter>
     </ClCompile>
     <ClCompile Include="NoCollisionObject.cpp">
@@ -296,22 +308,34 @@
     <ClCompile Include="CGX_BULLET.cpp">
       <Filter>Source Files\OtherObj</Filter>
     </ClCompile>
-    <ClCompile Include="CWAVE_BULLET.cpp">
+    <ClCompile Include="WaveBullet.cpp">
       <Filter>Source Files\OtherObj</Filter>
     </ClCompile>
     <ClCompile Include="CGRENADE.cpp">
       <Filter>Source Files\OtherObj</Filter>
     </ClCompile>
-    <ClCompile Include="ClaserBullet.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="TankDoor.cpp">
+      <Filter>Source Files\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="MiniJason.cpp">
+      <Filter>Source Files\Player</Filter>
     </ClCompile>
     <ClCompile Include="sound.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\System</Filter>
+    </ClCompile>
+    <ClCompile Include="ClaserBullet.cpp">
+      <Filter>Source Files\OtherObj</Filter>
+    </ClCompile>
+    <ClCompile Include="StatBar.cpp">
+      <Filter>Source Files\OtherObj</Filter>
     </ClCompile>
     <ClCompile Include="MapCamera.cpp">
+      <Filter>Source Files\System</Filter>
+    </ClCompile>
+    <ClCompile Include="CBREAKABLE_BRICK.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CSTATBAR.cpp">
+    <ClCompile Include="Items.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
